@@ -1,30 +1,35 @@
 # linklerim
 
 Linktree yerine geçen kişisel link sayfası. Saf HTML + CSS, build step yok,
-Cloudflare Pages'in ücretsiz katmanında çalışır. **Toplam maliyet: $0**
-(kendi alan adını bağlarsan ~$10/yıl).
+runtime bağımlılığı sıfır. Vercel'in ücretsiz katmanında çalışır.
+**Toplam maliyet: $0** (alan adı hariç).
 
 Linktree Pro'nun görünen tarafı burada bedava: link başına tık sayısı,
 kendi alan adı, özelleştirilebilir görünüm, doğru paylaşım önizlemesi.
 
+Canlı: <https://link.vitrincim.com>
+
 ```
 linklerim/
-├── public/               ← Cloudflare Pages'in yayınladığı dizin
-│   ├── index.html        ← sayfa (CSS gömülü, harici bağımlılık yok)
+├── public/               ← yayınlanan dizin
+│   ├── index.html        ← sayfa (CSS gömülü, harici font/JS/CDN yok)
 │   ├── links.json        ← CMS'in. Tek düzenlediğin dosya.
 │   ├── avatar.jpg        ← profil fotoğrafı
 │   ├── icons/            ← link ikonları (yerel kopya, dışarıya istek yok)
 │   ├── og.png            ← paylaşım görseli, 1200×630, statik
-│   └── _headers          ← güvenlik + cache başlıkları
-├── functions/            ← Cloudflare Pages Functions (repo kökünde olmalı)
+│   └── 404.html
+├── api/                  ← Vercel Edge Function'ları
 │   ├── go/[slug].js      ← /go/<slug> → 302 + tık sayacı
 │   └── stats.js          ← /stats → parola korumalı istatistik sayfası
 ├── lib/                  ← ortak mantık (test edilebilir olsun diye ayrı)
 │   ├── bots.js           ← bot / önizleme / prefetch filtresi
 │   ├── links.js          ← links.json okuma + doğrulama
-│   ├── go.js             ← yönlendirme + D1 kaydı
+│   ├── go.js             ← yönlendirme + tık kaydı
+│   ├── d1.js             ← Cloudflare D1'e HTTP API istemcisi
 │   └── stats.js          ← parola kontrolü + istatistik HTML'i
 ├── tests/                ← node --test, bağımlılık yok
+├── vercel.json           ← rewrite'lar, güvenlik başlıkları, cache
+├── wrangler.toml         ← sadece D1 komut satırı işleri için
 ├── links.example.json    ← fork edenler için şablon
 └── schema.sql            ← D1 tabloları
 ```
@@ -34,7 +39,7 @@ linklerim/
 ## 0. Bu repoyu forkladıysan
 
 Kod herkese açık, veri de öyle — çünkü bu sayfanın işi zaten o veriyi
-yayınlamak. Kendine uyarlamak için değiştirmen gereken **5 şey**:
+yayınlamak. Kendine uyarlamak için değiştirmen gereken **6 şey**:
 
 | # | Dosya | Ne yapacaksın |
 |---|---|---|
@@ -43,15 +48,15 @@ yayınlamak. Kendine uyarlamak için değiştirmen gereken **5 şey**:
 | 3 | `public/icons/` | İçindekileri sil. Kendi linklerinin ikonlarını istiyorsan aşağıya bak; istemiyorsan `links.json`'dan `icon` alanlarını çıkar, emoji'ler devreye girer |
 | 4 | `public/index.html` | Baştaki meta bloğu: `<title>`, `og:*`, `twitter:*` ve `canonical`. İçinde `link.vitrincim.com` geçen 4 adresi kendi alan adınla değiştir |
 | 5 | `public/og.png` | 1200×630 kendi paylaşım görselin |
-| 6 | `wrangler.toml` | `name` → kendi Pages proje adın, `database_id` → kendi D1 veritabanının UUID'si (`npx wrangler d1 list` ile öğrenilir) |
+| 6 | `wrangler.toml` | Kendi D1 veritabanının UUID'si (`npx wrangler d1 list` ile öğrenilir) |
 
-Bunlar dışında hiçbir yerde kişisel veri yok. Parolalar ve veritabanı
-kimlikleri zaten repoda değil (Cloudflare dashboard'da).
+Bunlar dışında hiçbir yerde kişisel veri yok. Parolalar ve API token'ları
+repoda değil, Vercel'in ortam değişkenlerinde.
 
 **Link ikonları:** her sitenin kendi favicon'unu indirip `public/icons/`
 içine koy — `https://site.com/apple-touch-icon.png` veya
 `https://site.com/favicon.ico` çoğunda çalışır. PNG'ye çevir (dosya uzantısı
-ile gerçek format uyuşmazsa `nosniff` header'ı yüzünden tarayıcı çizmez),
+ile gerçek format uyuşmazsa `nosniff` başlığı yüzünden tarayıcı çizmez),
 `links.json`'da `"icon": "/icons/adi.png"` yaz.
 
 Google'ın favicon servisi gibi bir üçüncü partiye **bağlanmıyoruz**: hem
@@ -60,98 +65,86 @@ düşerdi. İkonlar yerel dosya.
 
 ---
 
-## 1. Cloudflare Pages'e bağlama
+## 1. Vercel'e bağlama
 
-1. Bu klasörü bir GitHub reposuna at (private olabilir):
+1. Klasörü bir GitHub reposuna at, sonra:
+
    ```bash
-   git init && git add . && git commit -m "linklerim" && git branch -M main
+   npx vercel link --yes --project linklerim
    ```
-   Sonra GitHub'da boş bir repo açıp `git remote add origin ...` + `git push -u origin main`.
 
-2. [dash.cloudflare.com](https://dash.cloudflare.com) → **Compute (Workers & Pages)**
-   → **Create** → **Pages** → **Connect to Git** → repoyu seç.
+   Bu komut projeyi oluşturur ve GitHub reposunu bağlar. Bundan sonra `main`
+   dalına atılan her commit otomatik deploy olur.
 
-3. Build ayarları — **hepsi bu**:
+2. Build ayarı yok. `vercel.json` gerekli her şeyi söylüyor:
+   - `outputDirectory: public` — yayınlanan dizin
+   - `rewrites` — `/go/:slug` ve `/stats` adreslerini `api/` altındaki
+     fonksiyonlara bağlar
+   - `headers` — güvenlik başlıkları ve cache kuralları
 
-   | Alan | Değer |
-   |---|---|
-   | Framework preset | **None** |
-   | Build command | **boş bırak** |
-   | Build output directory | `public` |
-   | Root directory | `/` |
+3. İlk yayın:
 
-   > Çıktı dizini repodaki `wrangler.toml`'da da yazılı
-   > (`pages_build_output_dir = "./public"`) ve **o dosya öncelikli** —
-   > dashboard'da yanlış yazsan bile doğrusu uygulanır.
-   > Build command'ı boş bırakmak önemli: `package.json` sadece test scriptleri
-   > için var, bağımlılığı yok; Pages hiçbir şey derlemeyecek.
-   > `functions/` dizini repo kökünde durur (`public/` içinde değil) —
-   > Cloudflare onu otomatik bulur.
-
-4. **Save and Deploy**. ~30 saniye sonra site `<proje>.pages.dev` adresinde.
-
-Bundan sonra `main` dalına atılan her commit otomatik deploy olur.
+   ```bash
+   npx vercel --prod
+   ```
 
 ---
 
-## 2. D1 veritabanı (tık sayacı)
+## 2. Tık sayacı (Cloudflare D1)
+
+Sayaç Cloudflare D1'de duruyor ve oraya HTTP API üzerinden yazılıyor.
+Vercel'in ücretsiz katmanında yerleşik bir veritabanı yok; alternatifler
+(Upstash, Neon) ayrı birer üçüncü parti hesap demek. D1'in ücretsiz katmanı
+bu iş için fazlasıyla yeterli.
 
 **a) Veritabanını oluştur**
 
-Dashboard → **Storage & Databases** → **D1 SQL Database** → **Create**
-→ ad: `linklerim-clicks`.
+Cloudflare dashboard → **Storage & Databases** → **D1** → **Create**
+→ ad: `linklerim-clicks`. Sonra `wrangler.toml` içindeki `database_id`
+alanına UUID'yi yaz.
 
 **b) Tabloları kur**
-
-Veritabanı sayfasındaki **Console** sekmesine [`schema.sql`](schema.sql)
-içeriğini yapıştırıp çalıştır. Ya da terminalden:
 
 ```bash
 npx wrangler d1 execute linklerim-clicks --remote --file=schema.sql
 ```
 
-**c) Pages projesine bağla**
+**c) API token'ı üret**
 
-Binding dashboard'dan değil, repodaki [`wrangler.toml`](wrangler.toml)
-dosyasından geliyor. Tek yapman gereken kendi veritabanı ID'ni yazmak:
+Cloudflare → profil menüsü → **API Tokens** → **Create Custom Token**:
+
+| Alan | Değer |
+|---|---|
+| Permissions | Account → **D1** → **Edit** |
+| Account Resources | Include → kendi hesabın |
+
+**d) Vercel'e üç değişkeni tanıt**
 
 ```bash
-npx wrangler d1 list          # linklerim-clicks satırındaki uuid'yi kopyala
+npx vercel env add CF_ACCOUNT_ID production
+npx vercel env add CF_DATABASE_ID production
+npx vercel env add CF_API_TOKEN production
 ```
 
-```toml
-[[d1_databases]]
-binding = "DB"
-database_name = "linklerim-clicks"
-database_id = "BURAYA-KENDI-UUID"
-```
+Sırasıyla: Cloudflare hesap ID'si, D1 veritabanı UUID'si, üstteki token.
+Ekledikten sonra yeniden deploy et — ortam değişkenleri yalnızca yeni
+deployment'lara işler.
 
-Commit + push → Cloudflare otomatik deploy eder, binding devreye girer.
-
-> **Neden dosyada?** `wrangler.toml` içinde `pages_build_output_dir` anahtarı
-> olduğu için bu dosya üretim ayarlarını yönetiyor — build çıktı dizini ve
-> binding'ler buradan okunuyor, **dashboard'da tanımlananlar yok sayılıyor.**
-> Ayarların repoda durması forklayan için de doğru çalışması demek.
-
-> Binding yoksa site yine çalışır: linkler yönlenir, sadece sayaç yazmaz.
-> Sayaç hiçbir zaman yönlendirmeyi bloklamaz.
+> Üçünden biri eksikse site yine çalışır: linkler yönlenir, sadece sayaç
+> yazmaz. Sayaç hiçbir zaman yönlendirmeyi bloklamaz.
 
 ---
 
 ## 3. /stats parolası
 
-Parola **dosyada tutulmaz** (binding'lerin aksine). Terminalden:
-
 ```bash
-npx wrangler pages secret put STATS_PASSWORD --project-name linklerim
+npx vercel env add STATS_PASSWORD production
 ```
 
-Komut parolayı soracak, yaz ve enter'la. Dashboard'dan yapmak istersen:
-Pages projesi → **Settings** → **Variables and Secrets** → **Add** →
-Type **Secret** → Name `STATS_PASSWORD`.
+Komut parolayı soracak, yaz ve enter'la. Sonra yeniden deploy et.
 
 Artık `https://siten/stats` tarayıcıda parola kutusu çıkarır (kullanıcı adı
-serbest, sadece parola önemli). Terminalden bakmak için:
+serbest, sadece parola önemli). Terminalden:
 
 ```bash
 curl -u :PAROLA https://siten/stats
@@ -159,56 +152,31 @@ curl -u :PAROLA https://siten/stats
 
 Tanımlı değilse `/stats` 503 döner — açıkta kalmaz.
 
-Yerel geliştirmede aynı değer `.dev.vars` dosyasından okunur, o da repoya
-girmez.
-
 ---
 
-## 4. Cloudflare Web Analytics (ücretsiz, çerezsiz)
+## 4. Web Analytics (ücretsiz, çerezsiz)
 
-Pages projesi → **Analytics** sekmesi → **Web Analytics** → **Enable**.
+Vercel → proje → **Analytics** sekmesi → **Enable**.
 
-Koda hiçbir şey eklemene gerek yok: Cloudflare beacon'ı kenarda kendisi
-enjekte eder. Çerez yok, kişisel veri yok, GDPR banner'ı gerekmez.
-(`_headers` içindeki CSP bu beacon'a zaten izin veriyor.)
+`index.html` içindeki script zaten hazır. Script **kendi alan adından**
+(`/_vercel/insights/script.js`) geliyor, yani harici bağımlılık bile değil —
+CSP'de tek bir dış kaynağa izin vermek gerekmiyor. Çerez yok, kişisel veri
+yok, GDPR banner'ı gerekmez.
 
 ---
 
 ## 5. Kendi alan adını bağlama
 
-Pages projesi → **Custom domains** → **Set up a domain** → alan adını yaz.
+```bash
+npx vercel domains add link.ornek.com
+```
 
-**Alan adı zaten Cloudflare'daysa:** DNS kaydını Cloudflare otomatik ekler,
-başka bir şey yapman gerekmez.
-
-**Alan adı başka bir kayıt firmasındaysa** şu kayıtları ekle:
-
-**Bu projede kullanılan: `link.vitrincim.com`** (alt alan adı — ek maliyet yok)
-
-| Tip | Ad | İçerik | Proxy | TTL |
-|---|---|---|---|---|
-| CNAME | `link` | `<proje>.pages.dev` | Proxied (turuncu bulut) | Auto |
-
-Kök alan adını (`ornek.com`) kullanacaksan:
-
-| Tip | Ad | İçerik | Proxy | TTL |
-|---|---|---|---|---|
-| CNAME | `@` | `<proje>.pages.dev` | Proxied | Auto |
-| CNAME | `www` | `<proje>.pages.dev` | Proxied | Auto |
-
-> Apex (`@`) için CNAME'e izin vermeyen sağlayıcılarda ya alan adını
-> Cloudflare nameserver'larına taşı (ücretsiz, CNAME flattening yapar)
-> ya da sadece `www` kullan. Alt alan adında (`link.`) bu sorun hiç yok.
-
-SSL sertifikası otomatik gelir, birkaç dakika sürebilir.
+Alan adının DNS'i Vercel'deyse kayıt otomatik oluşur. Başka bir sağlayıcıdaysa
+Vercel sana eklemen gereken kaydı söyler.
 
 **Alan adını değiştirirsen** `public/index.html` içindeki meta bloğunda geçen
-4 adresi de güncelle (`canonical`, `og:url`, `og:image`, `twitter:image`) ve
-commit at. Bu adresler mutlak olmak zorunda, yoksa paylaşım önizlemesi
-çalışmaz. Şu an hepsi `https://link.vitrincim.com/` olarak ayarlı.
-
-> Alt alan adı (`link.vitrincim.com` gibi) kullanmak ücretsizdir — elindeki
-> alan adına tek bir CNAME kaydı eklemen yeter, ayrı alan adı almana gerek yok.
+4 adresi de güncelle (`canonical`, `og:url`, `og:image`, `twitter:image`).
+Bu adresler mutlak olmak zorunda, yoksa paylaşım önizlemesi çalışmaz.
 
 ---
 
@@ -252,7 +220,7 @@ Sayfadaki her şey `public/links.json`'dan gelir. Telefondan:
 | `profile.bio` | – | Boşsa satır hiç çizilmez |
 | `profile.avatar` | – | Boş bırakırsan baş harfler gösterilir. Dolduracaksan dosyayı `public/` içine koy ve `"/avatar.jpg"` yaz — **dış URL çalışmaz**, CSP engeller |
 | `profile.accent` | – | `#rrggbb`. Avatar, odak halkası ve öne çıkan link kenarlığı |
-| `credit.label` / `credit.url` | – | Footer'daki "… tarafından yapıldı" satırı. Blok komple silinirse satır da kaybolur |
+| `credit.label` / `credit.url` | – | Footer'daki "… tarafından yapıldı" satırı. Blok silinirse satır da kaybolur |
 | `links[].slug` | ✅ | Küçük harf/rakam/`-`. `/go/<slug>` adresi ve sayaç anahtarı bu |
 | `links[].title` | ✅ | Butonda görünen yazı |
 | `links[].url` | ✅ | `http`, `https`, `mailto` veya `tel` |
@@ -266,18 +234,16 @@ Linklerin **sırası** dosyadaki sıradır. Geçersiz kayıtlar (eksik alan,
 > **Slug'ı değiştirirsen** sayacı sıfırlanır; eski slug `/stats` içinde
 > "arşiv" olarak görünmeye devam eder.
 
-**İsim veya bio'yu değiştirirsen** `index.html` içindeki meta tag'leri
-(`og:title`, `og:description`, `<title>`) ve `og.png` görselini de elle
-güncelle. Paylaşım önizlemesini çeken botlar JavaScript çalıştırmaz.
+**İsim veya bio'yu değiştirirsen** `index.html` içindeki meta tag'leri ve
+`og.png` görselini de elle güncelle. Paylaşım önizlemesini çeken botlar
+JavaScript çalıştırmaz.
 
 ---
 
 ## 7. OG görseli
 
-`public/og.png` — 1200×630 statik PNG. Otomatik üretim yok (Satori/resvg
-kurmuyoruz; içerik nadiren değişiyor). Değiştirmek için aynı ölçüde bir PNG
-ile üzerine yaz. Değişikliğin görünmesi için paylaşım botlarının cache'i
-birkaç saat sürebilir; test etmek için:
+`public/og.png` — 1200×630 statik PNG. Otomatik üretim yok. Değiştirmek için
+aynı ölçüde bir PNG ile üzerine yaz. Test için:
 
 - X: <https://cards-dev.twitter.com/validator>
 - Facebook/WhatsApp: <https://developers.facebook.com/tools/debug/>
@@ -300,43 +266,58 @@ Her link `/go/<slug>` üzerinden gider ve 302 ile hedefe yönlenir.
 Bu filtre olmadan sayılar 2–3 kat şişer: bir linki WhatsApp'ta paylaşman
 bile tek başına birkaç "tık" yaratır.
 
-**Gizlilik:** D1'e sadece `slug + zaman damgası + sayaç` yazılır.
+**Gizlilik:** veritabanına sadece `slug + zaman damgası + sayaç` yazılır.
 Ham IP, user-agent, referrer hiçbir yerde loglanmaz veya saklanmaz.
 Bunu doğrulayan bir test var (`tests/go.test.js`).
 
 Sayaç `waitUntil()` ile arka planda yazılır: yönlendirmeyi geciktirmez,
-D1 çökse bile link çalışmaya devam eder.
+veritabanı çökse bile link çalışmaya devam eder.
 
 ---
 
 ## 9. Yerelde çalıştırma
 
-Yapılandırma zaten repoda ([`wrangler.toml`](wrangler.toml)). Tek eksik,
-yerel parola dosyası — repoya girmediği için kendin oluşturuyorsun:
+```bash
+npx vercel env pull .env.local   # ortam değişkenlerini indir (repoya girmez)
+npx vercel dev                   # http://localhost:3000
+npm test                         # 30 test, bağımlılık yok
+```
 
-**`.dev.vars`**
-```
-STATS_PASSWORD=yerel-test-parolasi
-```
+Veritabanına bakmak:
 
 ```bash
-npm run db:local     # yerel D1'e tabloları kur (bir kez)
-npm run dev          # http://127.0.0.1:8788
-npm test             # bot filtresi + sayaç + parola testleri
-```
-
-Yerel D1'e bakmak:
-
-```bash
-npx wrangler d1 execute linklerim-clicks --local --command "SELECT * FROM clicks"
+npx wrangler d1 execute linklerim-clicks --remote --command "SELECT * FROM clicks"
 ```
 
 ---
 
-## 10. Kapsam dışı — bilinçli olarak yok
+## 10. Neden Cloudflare Pages değil
 
-VPS/Docker/nginx yok (ücretsiz CDN'i parayla+bakımla değiştirmek olurdu),
-build pipeline yok, framework yok, hesap sistemi/admin paneli yok,
-üçüncü parti analytics yok, e-posta toplama yok, otomatik OG üretimi yok.
+Proje ilk olarak Cloudflare Pages üzerine kurulmuştu ve orada sorunsuz
+çalışıyordu. Taşınma sebebi teknik değil: **`pages.dev` Türkiye'de DNS
+seviyesinde engelli.** Türk Telekom çözümleyicisi apex için engel sayfasının
+IP'sini (`195.175.254.2`) döndürüyor, alt alanları hiç çözmüyor — 8.8.8.8 veya
+1.1.1.1 sorulsa bile, çünkü düz DNS trafiği araya giriliyor. Sadece şifreli
+DNS (DoH) kullananlar siteye ulaşabiliyordu.
+
+Özel alan adı bir CNAME ile `pages.dev`'e bağlandığı için engel zincire
+yansıyordu. Denenen ve işe yaramayan yollar:
+
+- **ALIAS kaydı** (sunucu tarafında düzleştirilmiş CNAME): engeli aşıyordu
+  ama Cloudflare'in özel alan adı doğrulaması gerçek bir CNAME aradığı için
+  domain hiç aktifleşmedi.
+- **Alt alan zone devri**: Cloudflare bunu ücretsiz planda kabul etmiyor.
+- **Tüm alan adını Cloudflare'e taşımak**: e-posta kayıtlarını riske atıyordu.
+
+Vercel'de barınmak zinciri tamamen ortadan kaldırıyor. Sayaç yine D1'de,
+sadece artık HTTP API üzerinden yazılıyor.
+
+---
+
+## 11. Kapsam dışı — bilinçli olarak yok
+
+VPS/Docker/nginx yok, build pipeline yok, framework yok, hesap sistemi/admin
+paneli yok, üçüncü parti analytics yok, e-posta toplama yok, otomatik OG
+üretimi yok.
 
 Toplam runtime bağımlılığı: **sıfır**.
