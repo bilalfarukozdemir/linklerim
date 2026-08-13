@@ -1,0 +1,20 @@
+# Cloudflare Pages yapılandırması.
+#
+# `pages_build_output_dir` burada olduğu için bu dosya ÜRETİM ayarlarını yönetir:
+# build çıktı dizini ve binding'ler dashboard'dan değil buradan okunur.
+# Avantajı: ayarlar repoda, forklayanda da kendiliğinden doğru çalışır.
+#
+# Buraya PAROLA YAZILMAZ. Secret'lar dosyada tutulmaz:
+#   npx wrangler pages secret put STATS_PASSWORD --project-name linklerim
+# Yerel geliştirmede aynı değer .dev.vars dosyasından okunur (o da repoya girmez).
+
+name = "linklerim"
+compatibility_date = "2026-08-01"
+pages_build_output_dir = "./public"
+
+# Tık sayacı. database_id gizli bir bilgi değil, sadece bir tanımlayıcı —
+# erişim için ayrıca API token gerekir. Forklayan kendi ID'sini yazar.
+[[d1_databases]]
+binding = "DB"
+database_name = "linklerim-clicks"
+database_id = "677b1352-c1a0-498d-80e0-ebd9730e95c5"

@@ -43,6 +43,7 @@ yayınlamak. Kendine uyarlamak için değiştirmen gereken **5 şey**:
 | 3 | `public/icons/` | İçindekileri sil. Kendi linklerinin ikonlarını istiyorsan aşağıya bak; istemiyorsan `links.json`'dan `icon` alanlarını çıkar, emoji'ler devreye girer |
 | 4 | `public/index.html` | Baştaki meta bloğu: `<title>`, `og:*`, `twitter:*` ve `canonical`. İçinde `link.vitrincim.com` geçen 4 adresi kendi alan adınla değiştir |
 | 5 | `public/og.png` | 1200×630 kendi paylaşım görselin |
+| 6 | `wrangler.toml` | `name` → kendi Pages proje adın, `database_id` → kendi D1 veritabanının UUID'si (`npx wrangler d1 list` ile öğrenilir) |
 
 Bunlar dışında hiçbir yerde kişisel veri yok. Parolalar ve veritabanı
 kimlikleri zaten repoda değil (Cloudflare dashboard'da).
@@ -79,7 +80,10 @@ düşerdi. İkonlar yerel dosya.
    | Build output directory | `public` |
    | Root directory | `/` |
 
-   > Build command'ı boş bırakmak önemli. `package.json` sadece test scriptleri
+   > Çıktı dizini repodaki `wrangler.toml`'da da yazılı
+   > (`pages_build_output_dir = "./public"`) ve **o dosya öncelikli** —
+   > dashboard'da yanlış yazsan bile doğrusu uygulanır.
+   > Build command'ı boş bırakmak önemli: `package.json` sadece test scriptleri
    > için var, bağımlılığı yok; Pages hiçbir şey derlemeyecek.
    > `functions/` dizini repo kökünde durur (`public/` içinde değil) —
    > Cloudflare onu otomatik bulur.
@@ -108,15 +112,26 @@ npx wrangler d1 execute linklerim-clicks --remote --file=schema.sql
 
 **c) Pages projesine bağla**
 
-Pages projesi → **Settings** → **Bindings** → **Add** → **D1 database**:
+Binding dashboard'dan değil, repodaki [`wrangler.toml`](wrangler.toml)
+dosyasından geliyor. Tek yapman gereken kendi veritabanı ID'ni yazmak:
 
-| Alan | Değer |
-|---|---|
-| Variable name | `DB` |
-| D1 database | `linklerim-clicks` |
+```bash
+npx wrangler d1 list          # linklerim-clicks satırındaki uuid'yi kopyala
+```
 
-Kaydet, sonra **Deployments** → son deployment → **Retry deployment**.
-Binding'ler ancak yeni bir deploy ile devreye girer.
+```toml
+[[d1_databases]]
+binding = "DB"
+database_name = "linklerim-clicks"
+database_id = "BURAYA-KENDI-UUID"
+```
+
+Commit + push → Cloudflare otomatik deploy eder, binding devreye girer.
+
+> **Neden dosyada?** `wrangler.toml` içinde `pages_build_output_dir` anahtarı
+> olduğu için bu dosya üretim ayarlarını yönetiyor — build çıktı dizini ve
+> binding'ler buradan okunuyor, **dashboard'da tanımlananlar yok sayılıyor.**
+> Ayarların repoda durması forklayan için de doğru çalışması demek.
 
 > Binding yoksa site yine çalışır: linkler yönlenir, sadece sayaç yazmaz.
 > Sayaç hiçbir zaman yönlendirmeyi bloklamaz.
@@ -125,25 +140,27 @@ Binding'ler ancak yeni bir deploy ile devreye girer.
 
 ## 3. /stats parolası
 
-Pages projesi → **Settings** → **Variables and Secrets** → **Add**:
+Parola **dosyada tutulmaz** (binding'lerin aksine). Terminalden:
 
-| Alan | Değer |
-|---|---|
-| Type | **Secret** (Text değil) |
-| Name | `STATS_PASSWORD` |
-| Value | uzun ve rastgele bir parola |
+```bash
+npx wrangler pages secret put STATS_PASSWORD --project-name linklerim
+```
 
-Kaydet + yeniden deploy et. Artık `https://siten/stats` adresi tarayıcıda
-parola kutusu çıkarır (kullanıcı adı serbest, sadece parola önemli).
+Komut parolayı soracak, yaz ve enter'la. Dashboard'dan yapmak istersen:
+Pages projesi → **Settings** → **Variables and Secrets** → **Add** →
+Type **Secret** → Name `STATS_PASSWORD`.
 
-Terminalden bakmak için:
+Artık `https://siten/stats` tarayıcıda parola kutusu çıkarır (kullanıcı adı
+serbest, sadece parola önemli). Terminalden bakmak için:
 
 ```bash
 curl -u :PAROLA https://siten/stats
 ```
 
-Secret repoda durmaz, dashboard'da şifreli tutulur. Tanımlı değilse `/stats`
-503 döner — açıkta kalmaz.
+Tanımlı değilse `/stats` 503 döner — açıkta kalmaz.
+
+Yerel geliştirmede aynı değer `.dev.vars` dosyasından okunur, o da repoya
+girmez.
 
 ---
 
@@ -294,22 +311,12 @@ D1 çökse bile link çalışmaya devam eder.
 
 ## 9. Yerelde çalıştırma
 
-Yerel geliştirme için repo kökünde bir `wrangler.toml` gerekiyor.
-**Bu dosya `.gitignore`'da ve öyle kalmalı** — Pages, repoda wrangler config
-dosyası görürse dashboard'daki binding ve secret'ları yok sayar.
+Yapılandırma zaten repoda ([`wrangler.toml`](wrangler.toml)). Tek eksik,
+yerel parola dosyası — repoya girmediği için kendin oluşturuyorsun:
 
-```toml
-name = "linklerim"
-compatibility_date = "2026-08-01"
-pages_build_output_dir = "./public"
-
-[[d1_databases]]
-binding = "DB"
-database_name = "linklerim-clicks"
-database_id = "00000000-0000-0000-0000-000000000000"
-
-[vars]
-STATS_PASSWORD = "yerel-test-parolasi"
+**`.dev.vars`**
+```
+STATS_PASSWORD=yerel-test-parolasi
 ```
 
 ```bash
