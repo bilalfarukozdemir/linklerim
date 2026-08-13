@@ -1,0 +1,13 @@
+{
+  "name": "linklerim",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Statik link-in-bio sayfası — Cloudflare Pages + D1",
+  "scripts": {
+    "test": "node --test \"tests/*.test.js\"",
+    "dev": "npx --yes wrangler pages dev --port 8788",
+    "db:local": "npx --yes wrangler d1 execute linklerim-clicks --local --file=schema.sql",
+    "db:remote": "npx --yes wrangler d1 execute linklerim-clicks --remote --file=schema.sql"
+  }
+}

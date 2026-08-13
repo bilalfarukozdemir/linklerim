@@ -1,0 +1,17 @@
+node_modules/
+.wrangler/
+.dev.vars
+
+# Editör / araç ayarları — kişisel, repoya girmesin
+.claude/
+.vscode/
+.idea/
+
+# Yerel geliştirme config'i. Repoda olursa Cloudflare dashboard'daki
+# binding ve secret'lar yok sayılır — asla commit'leme.
+wrangler.toml
+wrangler.json
+wrangler.jsonc
+*.log
+.DS_Store
+Thumbs.db

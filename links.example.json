@@ -1,0 +1,38 @@
+{
+  "_aciklama": "Bu repoyu forkladıysan: bu dosyanın içeriğini public/links.json üzerine kopyala, kendi bilgilerinle doldur. Aşağıdaki _ ile başlayan alanlar sadece açıklama, silebilirsin.",
+
+  "profile": {
+    "name": "Adın Soyadın",
+    "bio": "Tek cümlelik bio.",
+    "avatar": "/avatar.jpg",
+    "accent": "#4f7cff"
+  },
+
+  "credit": {
+    "label": "siteni-yapan.com",
+    "url": "https://siteni-yapan.com"
+  },
+
+  "links": [
+    {
+      "slug": "site",
+      "title": "Web Sitem",
+      "url": "https://ornek.com",
+      "icon": "/icons/site.png",
+      "emoji": "🌐",
+      "featured": true
+    },
+    {
+      "slug": "instagram",
+      "title": "Instagram",
+      "url": "https://instagram.com/kullaniciadin",
+      "emoji": "📸"
+    },
+    {
+      "slug": "mail",
+      "title": "E-posta gönder",
+      "url": "mailto:sen@ornek.com",
+      "emoji": "✉️"
+    }
+  ]
+}

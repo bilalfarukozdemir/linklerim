@@ -1,0 +1,9 @@
+# Depoda satır sonları hep LF olsun — Windows/mac/Linux farkı diff'e düşmesin.
+* text=auto eol=lf
+
+# İkili dosyalar dönüştürülmesin
+*.png -text
+*.jpg -text
+*.jpeg -text
+*.ico -text
+*.webp -text

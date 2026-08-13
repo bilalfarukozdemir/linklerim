@@ -1,0 +1,58 @@
+{
+  "profile": {
+    "name": "Bilal Faruk Özdemir",
+    "bio": "bilgi📍mech",
+    "avatar": "/avatar.jpg",
+    "accent": "#4f7cff"
+  },
+  "credit": {
+    "label": "vitrincim.com",
+    "url": "https://vitrincim.com"
+  },
+  "links": [
+    {
+      "slug": "vitrincim",
+      "title": "İşletmeniz için Web Sitesi",
+      "url": "https://vitrincim.com",
+      "icon": "/icons/vitrincim.png",
+      "emoji": "🏪",
+      "featured": true
+    },
+    {
+      "slug": "kalicihediye",
+      "title": "Sevdiklerinize Özel Hediye",
+      "url": "https://kalicihediye.com",
+      "icon": "/icons/kalicihediye.png",
+      "emoji": "🎁",
+      "featured": true
+    },
+    {
+      "slug": "instagram",
+      "title": "Instagram",
+      "url": "https://instagram.com/bilalfarukozdemir",
+      "icon": "/icons/instagram.png",
+      "emoji": "📸"
+    },
+    {
+      "slug": "github",
+      "title": "GitHub",
+      "url": "https://github.com/bilalfarukozdemir",
+      "icon": "/icons/github.png",
+      "emoji": "💻"
+    },
+    {
+      "slug": "linkedin",
+      "title": "LinkedIn",
+      "url": "https://linkedin.com/in/bilalfarukozdemir",
+      "icon": "/icons/linkedin.png",
+      "emoji": "💼"
+    },
+    {
+      "slug": "tiktok",
+      "title": "TikTok",
+      "url": "https://tiktok.com/@bilalfarukozdemir",
+      "icon": "/icons/tiktok.png",
+      "emoji": "🎵"
+    }
+  ]
+}
