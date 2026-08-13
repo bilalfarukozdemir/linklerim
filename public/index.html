@@ -386,9 +386,11 @@ footer a:focus-visible{
 
 	function buildLink(link) {
 		var item = document.createElement("li");
+		// Aynı sekmede açılıyor: geri tuşu çalışsın ve uygulama içi
+		// tarayıcılarda (Instagram, TikTok) yeni sekme tuhaflığı olmasın.
+		// target="_blank" olmadığı için rel="noopener" da gereksiz.
 		var anchor = el("a", link.featured ? "link featured" : "link");
 		anchor.href = "/go/" + encodeURIComponent(link.slug);
-		anchor.rel = "noopener";
 
 		var arrow = el("span", "arrow", "↗");
 		arrow.setAttribute("aria-hidden", "true");
@@ -407,7 +409,6 @@ footer a:focus-visible{
 			var line = el("p");
 			var anchor = el("a", null, credit.label);
 			anchor.href = credit.url;
-			anchor.rel = "noopener";
 			line.append(anchor, document.createTextNode(" tarafından yapıldı"));
 			footer.appendChild(line);
 		}

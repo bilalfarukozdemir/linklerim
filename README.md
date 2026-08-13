@@ -243,7 +243,13 @@ JavaScript çalıştırmaz.
 ## 7. OG görseli
 
 `public/og.png` — 1200×630 statik PNG. Otomatik üretim yok. Değiştirmek için
-aynı ölçüde bir PNG ile üzerine yaz. Test için:
+aynı ölçüde bir PNG ile üzerine yaz.
+
+> Dosyayı **~50 KB altında tut**. Düz renk ve gradyan ağırlıklı bu tasarımda
+> 256 renkli palet gözle fark edilmeyen bir kayıpla dosyayı üçte birine
+> indiriyor (137 KB → 47 KB). Paylaşım önizlemesi o kadar hızlı açılır.
+
+Test için:
 
 - X: <https://cards-dev.twitter.com/validator>
 - Facebook/WhatsApp: <https://developers.facebook.com/tools/debug/>
