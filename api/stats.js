@@ -1,12 +1,15 @@
 /**
- * Cloudflare Pages Function — /stats
+ * Vercel Edge Function — /stats
  *
- * Parola korumalı. Parola `STATS_PASSWORD` environment variable'ından okunur;
- * Cloudflare dashboard'da secret olarak eklenir, repoda durmaz.
+ * Parola korumalı. `STATS_PASSWORD` ortam değişkeninden okunur;
+ * Vercel'de secret olarak tanımlanır, repoda durmaz.
  */
 
 import { loadLinks } from "../lib/links.js";
+import { d1FromEnv } from "../lib/d1.js";
 import { authorize, fetchStats, mergeStats, renderStatsPage } from "../lib/stats.js";
+
+export const config = { runtime: "edge" };
 
 const DAYS = 7;
 
@@ -31,26 +34,24 @@ function notice(title, message, status) {
 <meta name="robots" content="noindex,nofollow">
 <style>body{margin:0;min-height:100vh;display:grid;place-items:center;padding:1.5rem;text-align:center;
 background:#fbfbfd;color:#16181d;font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
-h1{font-size:1.125rem;margin:0 0 .5rem}p{color:#6b7080;margin:0;max-width:30rem}
+h1{font-size:1.125rem;margin:0 0 .5rem}p{color:#6b7080;margin:0;max-width:32rem}
 @media(prefers-color-scheme:dark){body{background:#0d0f14;color:#e8eaf0}p{color:#8d93a5}}</style>
 <div><h1>${title}</h1><p>${message}</p></div></html>`,
 		status,
 	);
 }
 
-export async function onRequest(context) {
-	const { request, env } = context;
-
+export default async function handler(request) {
 	if (request.method !== "GET" && request.method !== "HEAD") {
 		return page("Method Not Allowed", 405, { Allow: "GET, HEAD" });
 	}
 
-	const auth = await authorize(request, env);
+	const auth = await authorize(request, process.env);
 
 	if (auth === "unconfigured") {
 		return notice(
 			"İstatistikler kapalı",
-			"STATS_PASSWORD secret'ı tanımlı değil. Cloudflare dashboard → Settings → Variables and Secrets bölümünden ekleyip yeniden deploy et.",
+			"STATS_PASSWORD tanımlı değil. Vercel → Project → Settings → Environment Variables bölümünden ekleyip yeniden deploy et.",
 			503,
 		);
 	}
@@ -64,18 +65,21 @@ export async function onRequest(context) {
 		);
 	}
 
-	if (!env?.DB) {
+	const db = d1FromEnv(process.env);
+	if (!db) {
 		return notice(
 			"Veritabanı bağlı değil",
-			"D1 binding'i (DB) tanımlı değil. Cloudflare dashboard → Settings → Bindings → D1 database ekleyip yeniden deploy et.",
+			"CF_ACCOUNT_ID, CF_DATABASE_ID veya CF_API_TOKEN tanımlı değil. Vercel'in ortam değişkenlerine ekleyip yeniden deploy et.",
 			503,
 		);
 	}
 
 	const now = new Date();
+	const origin = new URL(request.url).origin;
+
 	const [data, stats] = await Promise.all([
-		loadLinks(env, request).catch(() => ({ profile: {}, links: [] })),
-		fetchStats(env.DB, { days: DAYS, now }),
+		loadLinks(origin).catch(() => ({ profile: {}, links: [] })),
+		fetchStats(db, { days: DAYS, now }),
 	]);
 
 	const rows = mergeStats({ links: data.links, totals: stats.totals, recent: stats.recent });

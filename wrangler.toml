@@ -1,19 +1,12 @@
-# Cloudflare Pages yapılandırması.
+# Site Vercel'de barınıyor; bu dosya SADECE D1 komut satırı işleri için.
+#   npx wrangler d1 execute linklerim-clicks --remote --command "SELECT * FROM clicks"
 #
-# `pages_build_output_dir` burada olduğu için bu dosya ÜRETİM ayarlarını yönetir:
-# build çıktı dizini ve binding'ler dashboard'dan değil buradan okunur.
-# Avantajı: ayarlar repoda, forklayanda da kendiliğinden doğru çalışır.
-#
-# Buraya PAROLA YAZILMAZ. Secret'lar dosyada tutulmaz:
-#   npx wrangler pages secret put STATS_PASSWORD --project-name linklerim
-# Yerel geliştirmede aynı değer .dev.vars dosyasından okunur (o da repoya girmez).
+# `pages_build_output_dir` anahtarı bilerek yok: olsaydı wrangler bu dosyayı
+# bir Cloudflare Pages projesinin üretim ayarı sanardı.
 
 name = "linklerim"
 compatibility_date = "2026-08-01"
-pages_build_output_dir = "./public"
 
-# Tık sayacı. database_id gizli bir bilgi değil, sadece bir tanımlayıcı —
-# erişim için ayrıca API token gerekir. Forklayan kendi ID'sini yazar.
 [[d1_databases]]
 binding = "DB"
 database_name = "linklerim-clicks"
