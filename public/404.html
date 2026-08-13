@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Sayfa bulunamadı</title>
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#fbfbfd" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d0f14" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='88'%3E%F0%9F%94%97%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+	color-scheme: light;
+	--bg:      #fbfbfd;
+	--surface: #ffffff;
+	--border:  #e4e6ee;
+	--text:    #16181d;
+	--muted:   #6b7080;
+	--accent:  #4f7cff;
+	--shadow:  0 1px 2px rgba(22, 24, 29, .05);
+}
+@media (prefers-color-scheme: dark){
+	:root{
+		color-scheme: dark;
+		--bg:      #0d0f14;
+		--surface: #161a22;
+		--border:  #262b36;
+		--text:    #e8eaf0;
+		--muted:   #8d93a5;
+		--accent:  #6f92ff;
+		--shadow:  0 1px 2px rgba(0, 0, 0, .35);
+	}
+}
+*, *::before, *::after{ box-sizing: border-box; }
+body{
+	margin: 0;
+	min-height: 100vh;
+	display: grid;
+	place-items: center;
+	padding: 1.5rem;
+	background: var(--bg);
+	color: var(--text);
+	font: 400 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+	      "Helvetica Neue", Arial, sans-serif;
+	-webkit-font-smoothing: antialiased;
+}
+main{ text-align: center; max-width: 24rem; }
+.code{
+	font-size: .75rem;
+	font-weight: 600;
+	letter-spacing: .12em;
+	color: var(--muted);
+	margin: 0 0 .75rem;
+}
+h1{
+	margin: 0 0 .5rem;
+	font-size: 1.375rem;
+	font-weight: 650;
+	letter-spacing: -.02em;
+}
+p{ margin: 0 0 1.75rem; color: var(--muted); font-size: .9375rem; }
+a{
+	display: inline-block;
+	padding: .75rem 1.5rem;
+	border: 1px solid var(--border);
+	border-radius: 14px;
+	background: var(--surface);
+	box-shadow: var(--shadow);
+	color: inherit;
+	font-size: .9375rem;
+	font-weight: 550;
+	text-decoration: none;
+	transition: transform .18s cubic-bezier(.2, .7, .3, 1), border-color .18s ease;
+}
+@media (hover: hover){
+	a:hover{ transform: translateY(-2px); border-color: var(--accent); }
+}
+a:active{ transform: translateY(0) scale(.985); }
+a:focus-visible{ outline: 2px solid var(--accent); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce){
+	a{ transition: none; }
+	a:hover{ transform: none; }
+}
+</style>
+</head>
+<body>
+<main>
+	<p class="code">404</p>
+	<h1>Böyle bir sayfa yok</h1>
+	<p>Aradığın link taşınmış ya da hiç var olmamış olabilir.</p>
+	<a href="/">← Linklere dön</a>
+</main>
+</body>
+</html>
