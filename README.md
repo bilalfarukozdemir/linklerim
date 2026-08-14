@@ -13,6 +13,14 @@ kendi alan adı, özelleştirilebilir görünüm, doğru paylaşım önizlemesi.
 
 Canlı: <https://link.vitrincim.com>
 
+<p align="center">
+  <img src="docs/screenshot.jpg" width="320"
+       alt="Mobil görünüm: dairesel avatar, isim, bio ve alt alta altı link butonu; ilk ikisi accent renkli kenarlıkla öne çıkarılmış. Her butonun solunda hedef sitenin kendi ikonu var.">
+</p>
+
+<p align="center"><sub>Koyu tema, telefon görünümü. Açık tema
+<code>prefers-color-scheme</code> ile otomatik değişir.</sub></p>
+
 ```
 linklerim/
 ├── public/               ← yayınlanan dizin
@@ -32,6 +40,7 @@ linklerim/
 │   ├── d1.js             ← Cloudflare D1'e HTTP API istemcisi
 │   └── stats.js          ← parola kontrolü + istatistik HTML'i
 ├── tests/                ← node --test, bağımlılık yok
+├── docs/                 ← README görselleri (siteye dahil değil)
 ├── vercel.json           ← rewrite'lar, güvenlik başlıkları, cache
 ├── wrangler.toml         ← sadece D1 komut satırı işleri için
 ├── links.example.json    ← fork edenler için şablon
