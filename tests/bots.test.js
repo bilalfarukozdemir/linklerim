@@ -81,7 +81,7 @@ test("navigasyon olmayan Fetch Metadata istekleri elenir", () => {
 	assert.equal(isNonNavigation(new Headers({})), false); // header yoksa karar UA'ya kalır
 });
 
-const url = "https://ornek.pages.dev/go/github";
+const url = "https://link.ornek.com/go/github";
 
 test("shouldCount: sadece gerçek tarayıcı navigasyonu sayılır", () => {
 	const gercek = new Request(url, {

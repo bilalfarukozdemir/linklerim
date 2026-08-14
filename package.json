@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Statik link-in-bio sayfası — Cloudflare Pages + D1",
+  "description": "Statik link-in-bio sayfası — Vercel Edge Functions, tık sayacı Cloudflare D1'de",
   "scripts": {
     "test": "node --test \"tests/*.test.js\"",
     "dev": "npx --yes wrangler pages dev --port 8788",

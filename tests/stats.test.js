@@ -8,7 +8,7 @@ const PAROLA = "cok-gizli-parola";
 const ENV = { STATS_PASSWORD: PAROLA };
 
 function req(authHeader) {
-	return new Request("https://ornek.pages.dev/stats", {
+	return new Request("https://link.ornek.com/stats", {
 		headers: authHeader ? { authorization: authHeader } : {},
 	});
 }

@@ -1,8 +1,12 @@
 # linklerim
 
 Linktree yerine geçen kişisel link sayfası. Saf HTML + CSS, build step yok,
-runtime bağımlılığı sıfır. Vercel'in ücretsiz katmanında çalışır.
-**Toplam maliyet: $0** (alan adı hariç).
+runtime bağımlılığı sıfır. **Toplam maliyet: $0** (alan adı hariç).
+
+Sayfa ve fonksiyonlar **Vercel**'de barınır; link başına tık sayacı
+**Cloudflare D1**'de tutulur ve oraya HTTP API üzerinden yazılır. İkisi de
+ücretsiz katman — kurulum için iki hesap gerekiyor, ikisi de bedava.
+Nedenini merak edersen: [§10](#10-neden-cloudflare-pages-değil).
 
 Linktree Pro'nun görünen tarafı burada bedava: link başına tık sayısı,
 kendi alan adı, özelleştirilebilir görünüm, doğru paylaşım önizlemesi.
