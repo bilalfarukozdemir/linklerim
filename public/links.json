@@ -27,6 +27,13 @@
       "featured": true
     },
     {
+      "slug": "ironcore-apps",
+      "title": "Android Uygulamalarım — IronCore Apps",
+      "url": "https://play.google.com/store/apps/dev?id=8567376206083240739",
+      "icon": "/icons/play-store.png",
+      "emoji": ""
+    },
+    {
       "slug": "instagram",
       "title": "Instagram",
       "url": "https://instagram.com/bilalfarukozdemir",
@@ -39,6 +46,12 @@
       "url": "https://github.com/bilalfarukozdemir",
       "icon": "/icons/github.png",
       "emoji": "💻"
+    },
+    {
+      "slug": "sponsor",
+      "title": "Projelerime Destek Ol — GitHub Sponsors",
+      "url": "https://github.com/sponsors/bilalfarukozdemir",
+      "emoji": "💖"
     },
     {
       "slug": "linkedin",
