@@ -240,6 +240,7 @@ Sayfadaki her şey `public/links.json`'dan gelir. Telefondan:
 | `links[].icon` | – | `public/` içindeki yerel dosya, `/` ile başlamalı. Dış URL kabul edilmez. Dosya yoksa emoji'ye düşer |
 | `links[].emoji` | – | İkon yoksa (veya yüklenemezse) solda görünen simge |
 | `links[].featured` | – | `true` → accent zemin + kalın kenarlık |
+| `links[].active` | – | `false` → sayfada görünmez, `/go/<slug>` 404 verir; tık geçmişi `/stats`'ta arşiv olarak kalır |
 
 Linklerin **sırası** dosyadaki sıradır. Geçersiz kayıtlar (eksik alan,
 `javascript:` gibi şema) sessizce atlanır — sayfa bozulmaz.

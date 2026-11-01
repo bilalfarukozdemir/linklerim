@@ -14,12 +14,13 @@
       "slug": "vitrincim",
       "title": "İşletmeniz için Web Sitesi",
       "url": "https://vitrincim.com",
-      "icon": "/icons/vitrincim.png",
+      "icon": "/icons/vitrincim.png?v=2",
       "emoji": "🏪",
       "featured": true
     },
     {
       "slug": "kalicihediye",
+      "active": false,
       "title": "Sevdiklerinize Özel Hediye",
       "url": "https://kalicihediye.com",
       "icon": "/icons/kalicihediye.png",
@@ -28,7 +29,7 @@
     },
     {
       "slug": "ironcore-apps",
-      "title": "Android Uygulamalarım — Vitrincim",
+      "title": "Android Uygulamalarım",
       "url": "https://play.google.com/store/apps/dev?id=8567376206083240739",
       "icon": "/icons/play-store.png",
       "emoji": ""
@@ -49,8 +50,9 @@
     },
     {
       "slug": "sponsor",
-      "title": "Projelerime Destek Ol — GitHub Sponsors",
+      "title": "Projelerime Destek Ol",
       "url": "https://github.com/sponsors/bilalfarukozdemir",
+      "icon": "/icons/github-sponsors.png",
       "emoji": "💖"
     },
     {

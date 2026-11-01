@@ -15,6 +15,7 @@ const LINKS = {
 		{ slug: "github", title: "GitHub", url: "https://github.com/test", emoji: "💻", featured: true },
 		{ slug: "mail", title: "E-posta", url: "mailto:test@ornek.com" },
 		{ slug: "kotu", title: "Kötü link", url: "javascript:alert(1)" },
+		{ slug: "kapali", title: "Kapalı", url: "https://ornek.com", active: false },
 	],
 };
 
@@ -175,4 +176,10 @@ test("waitUntil verilirse kayıt arka plana atılır", async () => {
 	assert.equal(bekleyenler.length, 1);
 	await Promise.all(bekleyenler);
 	assert.equal(db.batches.length, 1);
+});
+
+test("active:false olan link 404 verir", async () => {
+	const db = fakeDb();
+	const response = await handleGo({ request: request("kapali"), db, slug: "kapali", baseUrl: BASE });
+	assert.equal(response.status, 404);
 });
