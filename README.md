@@ -21,12 +21,20 @@ Canlı: <https://link.vitrincim.com>
 <p align="center"><sub>Açık tema, telefon görünümü. Koyu tema
 <code>prefers-color-scheme</code> ile otomatik değişir.</sub></p>
 
+<p align="center">
+  <img src="docs/screenshot-genis.jpg" width="720"
+       alt="Geniş ekran: pencerenin tamamı vitrin; üstte tente, iki yanda raflarda kale, kelime taşları, mantar, PDF, dizüstü ve yazar kasa, ortada tabela, fotoğraf ve link kartları.">
+</p>
+
+<p align="center"><sub>Geniş ekranda sahne pencerenin tamamını kaplar.</sub></p>
+
 ```
 linklerim/
 ├── public/               ← yayınlanan dizin
 │   ├── index.html        ← sayfa (CSS gömülü, harici font/JS/CDN yok)
-│   ├── vitrin.svg        ← vitrin sahnesi: raf ve üstündeki işler
-│   ├── fonts/            ← DM Serif Display, DM Sans (yerel kopya, OFL)
+│   ├── vitrin.svg        ← telefondaki küçük vitrin sahnesi
+│   ├── vitrin-genis.svg  ← geniş ekranda tam sayfa sahne, 1920×1080
+│   ├── fonts/            ← DM Serif Display, DM Sans (yerel kopya, OFL lisanslı)
 │   ├── links.json        ← CMS'in. Tek düzenlediğin dosya.
 │   ├── avatar.jpg        ← profil fotoğrafı
 │   ├── icons/            ← link ikonları (yerel kopya, dışarıya istek yok)
@@ -68,7 +76,16 @@ yayınlamak. Kendine uyarlamak için değiştirmen gereken **6 şey**:
 Bunlar dışında hiçbir yerde kişisel veri yok. Parolalar ve API token'ları
 repoda değil, Vercel'in ortam değişkenlerinde.
 
-**Link ikonları:** her sitenin kendi favicon'unu indirip `public/icons/`
+**Sahne:** `public/vitrin-genis.svg` en az 1100px genişlik ve 3:2 oranda tam
+sayfa arka plan olur, `public/vitrin.svg` daha dar ekranlardaki küçük vitrindir.
+Kendi sahneni koyacaksan ortadaki sütunu boş bırak (1920×1080'de x 600–1320) ve
+önemli nesneleri x 150–600, x 1320–1770, y 88–810 aralığında tut; dışı bazı
+ekranlarda kırpılır.
+
+**Link ikonları:** sayfadaki ikonlar tek renk SVG'dir, koyu kutuyu CSS çizer;
+aynı görünüm için `public/icons/github.svg` örnek alınabilir. Marka ikonlarının
+yolları [Simple Icons](https://simpleicons.org)'tan (CC0). Renkli favicon da
+çalışır: sitenin kendi favicon'unu indirip `public/icons/`
 içine koy — `https://site.com/apple-touch-icon.png` veya
 `https://site.com/favicon.ico` çoğunda çalışır. PNG'ye çevir (dosya uzantısı
 ile gerçek format uyuşmazsa `nosniff` başlığı yüzünden tarayıcı çizmez),
@@ -263,9 +280,9 @@ JavaScript çalıştırmaz.
 `public/og.png` — 1200×630 statik PNG. Otomatik üretim yok. Değiştirmek için
 aynı ölçüde bir PNG ile üzerine yaz.
 
-> Dosyayı **~50 KB altında tut**. Düz renk ve gradyan ağırlıklı bu tasarımda
-> 256 renkli palet gözle fark edilmeyen bir kayıpla dosyayı üçte birine
-> indiriyor (137 KB → 47 KB). Paylaşım önizlemesi o kadar hızlı açılır.
+> Dosyayı **~150 KB altında tut**. 256 renkli palet gözle fark edilmeyen bir
+> kayıpla dosyayı üçte birine indiriyor (308 KB → 102 KB). Paylaşım önizlemesi
+> o kadar hızlı açılır.
 
 Test için:
 
@@ -304,7 +321,7 @@ veritabanı çökse bile link çalışmaya devam eder.
 ```bash
 npx vercel env pull .env.local   # ortam değişkenlerini indir (repoya girmez)
 npx vercel dev                   # http://localhost:3000
-npm test                         # 30 test, bağımlılık yok
+npm test                         # 31 test, bağımlılık yok
 ```
 
 Veritabanına bakmak:
