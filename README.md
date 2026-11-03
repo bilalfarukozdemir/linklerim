@@ -15,7 +15,7 @@ Canlı: <https://link.vitrincim.com>
 
 <p align="center">
   <img src="docs/screenshot.jpg" width="320"
-       alt="Telefon görünümü: üstte tente ve tabelada isim ile bio, altında fotoğrafın durduğu vitrin camı, onun altında ikonlu ve iki satırlı link kartları; ilk kart dolu renkle öne çıkıyor.">
+       alt="Telefon görünümü: boyalı vitrin sahnesinin önünde tabelada isim ile bio, kale ve mantarın arasında fotoğraf, altında ikonlu ve iki satırlı link kartları; ilk kart dolu renkle öne çıkıyor.">
 </p>
 
 <p align="center"><sub>Açık tema, telefon görünümü. Koyu tema
@@ -23,17 +23,17 @@ Canlı: <https://link.vitrincim.com>
 
 <p align="center">
   <img src="docs/screenshot-genis.jpg" width="720"
-       alt="Geniş ekran: pencerenin tamamı vitrin; üstte tente, iki yanda raflarda kale, kelime taşları, mantar, PDF, dizüstü ve yazar kasa, ortada tabela, fotoğraf ve link kartları.">
+       alt="Geniş ekran: pencerenin tamamı boyalı vitrin sahnesi; üstte tente, iki yanda raflarda kale, ahşap taşlar, mantar, kâğıt, dizüstü ve yazar kasa, ortada tabela, fotoğraf ve link kartları.">
 </p>
 
-<p align="center"><sub>Geniş ekranda sahne pencerenin tamamını kaplar.</sub></p>
+<p align="center"><sub>Raftaki nesnelerin üstüne gelince o işin önizlemesi açılır.</sub></p>
 
 ```
 linklerim/
 ├── public/               ← yayınlanan dizin
 │   ├── index.html        ← sayfa (CSS gömülü, harici font/JS/CDN yok)
-│   ├── vitrin.svg        ← telefondaki küçük vitrin sahnesi
-│   ├── vitrin-genis.svg  ← geniş ekranda tam sayfa sahne, 1920×1080
+│   ├── sahne/            ← tam sayfa arka planlar: masaustu.webp, telefon.webp
+│   ├── onizleme/         ← raftaki nesnelerin üstünde açılan önizleme fotoğrafları
 │   ├── fonts/            ← DM Serif Display, DM Sans (yerel kopya, OFL lisanslı)
 │   ├── links.json        ← CMS'in. Tek düzenlediğin dosya.
 │   ├── avatar.jpg        ← profil fotoğrafı
@@ -76,11 +76,12 @@ yayınlamak. Kendine uyarlamak için değiştirmen gereken **6 şey**:
 Bunlar dışında hiçbir yerde kişisel veri yok. Parolalar ve API token'ları
 repoda değil, Vercel'in ortam değişkenlerinde.
 
-**Sahne:** `public/vitrin-genis.svg` en az 1100px genişlik ve 3:2 oranda tam
-sayfa arka plan olur, `public/vitrin.svg` daha dar ekranlardaki küçük vitrindir.
-Kendi sahneni koyacaksan ortadaki sütunu boş bırak (1920×1080'de x 600–1320) ve
-önemli nesneleri x 150–600, x 1320–1770, y 88–810 aralığında tut; dışı bazı
-ekranlarda kırpılır.
+**Sahne:** `public/sahne/masaustu.webp` en az 1100px genişlik ve 3:2 oranda,
+`public/sahne/telefon.webp` diğer ekranlarda pencereyi kaplar. İkisi de yapay
+zekâ ile üretildi; kendi sahneni koyacaksan masaüstünde orta sütunu (yatayda
+%31–69) boş bırak, önemli nesneleri yatayda %8–31 ve %69–92, dikeyde %75'in
+üstünde tut, dışı bazı ekranlarda kırpılır. Telefonda fotoğrafın iki yanı
+(dikeyde %13–32) ve kartların altı (%85'ten sonrası) görünür kalır.
 
 **Link ikonları:** sayfadaki ikonlar tek renk SVG'dir, koyu kutuyu CSS çizer;
 aynı görünüm için `public/icons/github.svg` örnek alınabilir. Marka ikonlarının
@@ -261,6 +262,7 @@ Sayfadaki her şey `public/links.json`'dan gelir. Telefondan:
 | `links[].icon` | – | `public/` içindeki yerel dosya, `/` ile başlamalı. Dış URL kabul edilmez. Dosya yoksa emoji'ye düşer |
 | `links[].emoji` | – | İkon yoksa (veya yüklenemezse) solda görünen simge |
 | `links[].featured` | – | `true` → sayfanın tek dolu kartı |
+| `links[].spot` | – | Linki kart yerine sahnedeki bir nesneye bağlar: `{x, y, w, h, preview}`. Konum ve boyut masaüstü sahnesinin yüzdesi, `preview` `public/` içindeki fotoğraf. Yalnız masaüstü sahnesinde ve fareyle görünür; tıklar yine `/go/<slug>` ile sayılır |
 | `links[].active` | – | `false` → sayfada görünmez, `/go/<slug>` 404 verir; tık geçmişi `/stats`'ta arşiv olarak kalır |
 
 Linklerin **sırası** dosyadaki sıradır. Geçersiz kayıtlar (eksik alan,
@@ -280,8 +282,8 @@ JavaScript çalıştırmaz.
 `public/og.png` — 1200×630 statik PNG. Otomatik üretim yok. Değiştirmek için
 aynı ölçüde bir PNG ile üzerine yaz.
 
-> Dosyayı **~150 KB altında tut**. 256 renkli palet gözle fark edilmeyen bir
-> kayıpla dosyayı üçte birine indiriyor (308 KB → 102 KB). Paylaşım önizlemesi
+> Dosyayı **~200 KB altında tut**. 256 renkli palet gözle fark edilmeyen bir
+> kayıpla dosyayı üçte birine indiriyor (yaklaşık üçte bir). Paylaşım önizlemesi
 > o kadar hızlı açılır.
 
 Test için:

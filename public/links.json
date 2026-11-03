@@ -75,6 +75,58 @@
       "url": "https://tiktok.com/@bilalfarukozdemir",
       "icon": "/icons/tiktok.svg",
       "emoji": "🎵"
+    },
+    {
+      "slug": "raf-kingdom",
+      "title": "Kingdom Deliverance",
+      "url": "https://vitrincim.com/isler/kingdom-deliverance",
+      "emoji": "🏰",
+      "spot": {
+        "x": 18.6,
+        "y": 25.4,
+        "w": 5.2,
+        "h": 22.6,
+        "preview": "/onizleme/kingdom.jpg"
+      }
+    },
+    {
+      "slug": "raf-pdf",
+      "title": "Offline PDF Toolbox",
+      "url": "https://vitrincim.com/isler/offline-pdf-toolbox",
+      "emoji": "📄",
+      "spot": {
+        "x": 78,
+        "y": 33.5,
+        "w": 6.6,
+        "h": 14.5,
+        "preview": "/onizleme/pdf.jpg"
+      }
+    },
+    {
+      "slug": "raf-site",
+      "title": "Arabacı Taş web sitesi",
+      "url": "https://vitrincim.com/isler/arabaci-tas",
+      "emoji": "💻",
+      "spot": {
+        "x": 73.4,
+        "y": 61.6,
+        "w": 8.6,
+        "h": 12.6,
+        "preview": "/onizleme/arabaci-tas.jpg"
+      }
+    },
+    {
+      "slug": "raf-kasa",
+      "title": "Market kasası",
+      "url": "https://vitrincim.com/isler/market-kasasi",
+      "emoji": "🧾",
+      "spot": {
+        "x": 82.4,
+        "y": 63,
+        "w": 7.1,
+        "h": 11.4,
+        "preview": "/onizleme/kasa.jpg"
+      }
     }
   ]
 }
