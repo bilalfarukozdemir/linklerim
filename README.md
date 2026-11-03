@@ -283,7 +283,7 @@ JavaScript çalıştırmaz.
 aynı ölçüde bir PNG ile üzerine yaz.
 
 > Dosyayı **~200 KB altında tut**. 256 renkli palet gözle fark edilmeyen bir
-> kayıpla dosyayı üçte birine indiriyor (yaklaşık üçte bir). Paylaşım önizlemesi
+> kayıpla dosyayı küçültüyor. Paylaşım önizlemesi
 > o kadar hızlı açılır.
 
 Test için:
@@ -313,6 +313,11 @@ bile tek başına birkaç "tık" yaratır.
 Ham IP, user-agent, referrer hiçbir yerde loglanmaz veya saklanmaz.
 Bunu doğrulayan bir test var (`tests/go.test.js`).
 
+**Kendi tıkların:** `/stats`'a parolayla girdiğin tarayıcıya `linklerim_sahip=1`
+çerezi bırakılır, o tarayıcıdan gelen tıklar bir yıl boyunca sayılmaz.
+Yönlendirme yine çalışır. Her tarayıcıda bir kez giriş yap; Instagram ve TikTok
+gibi uygulama içi tarayıcılar ayrı sayılır. Ziyaretçilere çerez bırakılmaz.
+
 Sayaç `waitUntil()` ile arka planda yazılır: yönlendirmeyi geciktirmez,
 veritabanı çökse bile link çalışmaya devam eder.
 
@@ -323,7 +328,7 @@ veritabanı çökse bile link çalışmaya devam eder.
 ```bash
 npx vercel env pull .env.local   # ortam değişkenlerini indir (repoya girmez)
 npx vercel dev                   # http://localhost:3000
-npm test                         # 31 test, bağımlılık yok
+npm test                         # 36 test, bağımlılık yok
 ```
 
 Veritabanına bakmak:

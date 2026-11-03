@@ -8,6 +8,7 @@
 import { loadLinks } from "../lib/links.js";
 import { d1FromEnv } from "../lib/d1.js";
 import { authorize, fetchStats, mergeStats, renderStatsPage } from "../lib/stats.js";
+import { OWNER_SET_COOKIE } from "../lib/bots.js";
 
 export const config = { runtime: "edge" };
 
@@ -27,7 +28,7 @@ function page(html, status = 200, extraHeaders = {}) {
 	return new Response(html, { status, headers: { ...BASE_HEADERS, ...extraHeaders } });
 }
 
-function notice(title, message, status) {
+function notice(title, message, status, extraHeaders) {
 	return page(
 		`<!doctype html><html lang="tr"><meta charset="utf-8"><title>${title}</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -38,6 +39,7 @@ h1{font-size:1.125rem;margin:0 0 .5rem}p{color:#6b7080;margin:0;max-width:32rem}
 @media(prefers-color-scheme:dark){body{background:#0d0f14;color:#e8eaf0}p{color:#8d93a5}}</style>
 <div><h1>${title}</h1><p>${message}</p></div></html>`,
 		status,
+		extraHeaders,
 	);
 }
 
@@ -65,12 +67,16 @@ export default async function handler(request) {
 		);
 	}
 
+	// Parolayı bilen sayfanın sahibi: bu tarayıcının tıkları artık sayılmaz.
+	const owner = { "Set-Cookie": OWNER_SET_COOKIE };
+
 	const db = d1FromEnv(process.env);
 	if (!db) {
 		return notice(
 			"Veritabanı bağlı değil",
 			"CF_ACCOUNT_ID, CF_DATABASE_ID veya CF_API_TOKEN tanımlı değil. Vercel'in ortam değişkenlerine ekleyip yeniden deploy et.",
 			503,
+			owner,
 		);
 	}
 
@@ -91,5 +97,7 @@ export default async function handler(request) {
 			generatedAt: now.toISOString(),
 			name: data.profile?.name ?? "",
 		}),
+		200,
+		owner,
 	);
 }

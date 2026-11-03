@@ -2,7 +2,7 @@
 
 import test from "node:test";
 import assert from "node:assert/strict";
-import { isPreviewBot, isPrefetch, isNonNavigation, shouldCount } from "../lib/bots.js";
+import { isPreviewBot, isPrefetch, isNonNavigation, isOwner, shouldCount, OWNER_SET_COOKIE } from "../lib/bots.js";
 
 const IPHONE =
 	"Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1";
@@ -111,4 +111,27 @@ test("shouldCount: bot, prefetch, HEAD ve iframe sayılmaz", () => {
 
 	const bos = new Request(url, { headers: {} });
 	assert.equal(shouldCount(bos), false);
+});
+
+test("isOwner: yalnız tam çerez eşleşir", () => {
+	const cookie = (value) => new Headers({ cookie: value });
+	assert.equal(isOwner(cookie("linklerim_sahip=1")), true);
+	assert.equal(isOwner(cookie("a=b; linklerim_sahip=1; c=d")), true);
+	assert.equal(isOwner(cookie("xlinklerim_sahip=1")), false);
+	assert.equal(isOwner(cookie("linklerim_sahip=0")), false);
+	assert.equal(isOwner(new Headers()), false);
+});
+
+test("shouldCount: sahibin tarayıcısı sayılmaz", () => {
+	const request = new Request("https://link.ornek.com/go/github", {
+		headers: { "user-agent": IPHONE, cookie: "linklerim_sahip=1" },
+	});
+	assert.equal(shouldCount(request), false);
+});
+
+test("sahip çerezi kimlik taşımaz ve JavaScript'e kapalı", () => {
+	assert.match(OWNER_SET_COOKIE, /^linklerim_sahip=1;/);
+	assert.match(OWNER_SET_COOKIE, /HttpOnly/);
+	assert.match(OWNER_SET_COOKIE, /Secure/);
+	assert.match(OWNER_SET_COOKIE, /SameSite=Lax/);
 });

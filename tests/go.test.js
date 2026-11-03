@@ -183,3 +183,13 @@ test("active:false olan link 404 verir", async () => {
 	const response = await handleGo({ request: request("kapali"), db, slug: "kapali", baseUrl: BASE });
 	assert.equal(response.status, 404);
 });
+
+test("sahibin tıkı sayılmaz ama yönlendirme yine çalışır", async () => {
+	const db = fakeDb();
+	const res = await go("github", {
+		db,
+		request: request("github", { headers: { "user-agent": IPHONE, cookie: "linklerim_sahip=1" } }),
+	});
+	assert.equal(res.status, 302);
+	assert.equal(db.batches.length, 0);
+});

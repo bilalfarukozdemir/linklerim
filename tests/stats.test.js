@@ -66,3 +66,20 @@ test("başlıklar HTML olarak kaçırılır", () => {
 	assert.equal(html.includes("<img src=x"), false);
 	assert.equal(html.includes("&lt;img src=x onerror=alert(1)&gt;"), true);
 });
+
+test("/stats: sahip çerezini yalnız doğru parolada bırakır", async () => {
+	const { default: handler } = await import("../api/stats.js");
+	const saved = { ...process.env };
+	process.env.STATS_PASSWORD = PAROLA;
+	for (const key of ["CF_ACCOUNT_ID", "CF_DATABASE_ID", "CF_API_TOKEN"]) delete process.env[key];
+	try {
+		const wrong = await handler(req(basic("admin", "yanlis")));
+		assert.equal(wrong.status, 401);
+		assert.equal(wrong.headers.get("set-cookie"), null);
+
+		const right = await handler(req(basic("admin", PAROLA)));
+		assert.match(right.headers.get("set-cookie") ?? "", /^linklerim_sahip=1;/);
+	} finally {
+		process.env = saved;
+	}
+});
