@@ -127,6 +127,32 @@
         "h": 11.4,
         "preview": "/onizleme/kasa.jpg"
       }
+    },
+    {
+      "slug": "raf-mantar",
+      "title": "Mantar Cepte",
+      "url": "https://play.google.com/store/apps/dev?id=8567376206083240739",
+      "emoji": "🍄",
+      "spot": {
+        "x": 72.4,
+        "y": 37.8,
+        "w": 5.6,
+        "h": 10.4,
+        "preview": "/onizleme/mantar-cepte.jpg"
+      }
+    },
+    {
+      "slug": "raf-kelime",
+      "title": "Kelime Avı",
+      "url": "https://play.google.com/store/apps/dev?id=8567376206083240739",
+      "emoji": "🔤",
+      "spot": {
+        "x": 17.2,
+        "y": 67.8,
+        "w": 12,
+        "h": 6.2,
+        "preview": "/onizleme/kelime-avi.jpg"
+      }
     }
   ]
 }
