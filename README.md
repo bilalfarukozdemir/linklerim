@@ -15,16 +15,18 @@ Canlı: <https://link.vitrincim.com>
 
 <p align="center">
   <img src="docs/screenshot.jpg" width="320"
-       alt="Mobil görünüm: dairesel avatar, isim, bio ve alt alta altı link butonu; ilk ikisi accent renkli kenarlıkla öne çıkarılmış. Her butonun solunda hedef sitenin kendi ikonu var.">
+       alt="Telefon görünümü: üstte tente ve tabelada isim ile bio, altında fotoğrafın durduğu vitrin camı, onun altında ikonlu ve iki satırlı link kartları; ilk kart dolu renkle öne çıkıyor.">
 </p>
 
-<p align="center"><sub>Koyu tema, telefon görünümü. Açık tema
+<p align="center"><sub>Açık tema, telefon görünümü. Koyu tema
 <code>prefers-color-scheme</code> ile otomatik değişir.</sub></p>
 
 ```
 linklerim/
 ├── public/               ← yayınlanan dizin
 │   ├── index.html        ← sayfa (CSS gömülü, harici font/JS/CDN yok)
+│   ├── vitrin.svg        ← vitrin sahnesi: raf ve üstündeki işler
+│   ├── fonts/            ← DM Serif Display, DM Sans (yerel kopya, OFL)
 │   ├── links.json        ← CMS'in. Tek düzenlediğin dosya.
 │   ├── avatar.jpg        ← profil fotoğrafı
 │   ├── icons/            ← link ikonları (yerel kopya, dışarıya istek yok)
@@ -208,7 +210,7 @@ Sayfadaki her şey `public/links.json`'dan gelir. Telefondan:
     "name": "Adın Soyadın",
     "bio": "Tek cümlelik bio.",
     "avatar": "/avatar.jpg",
-    "accent": "#4f7cff"
+    "accent": "#a8884a"
   },
   "credit": {
     "label": "vitrincim.com",
@@ -218,8 +220,9 @@ Sayfadaki her şey `public/links.json`'dan gelir. Telefondan:
     {
       "slug": "github",
       "title": "GitHub",
+      "desc": "açık kaynak projelerim",
       "url": "https://github.com/kullaniciadin",
-      "icon": "/icons/github.png",
+      "icon": "/icons/github.svg",
       "emoji": "💻",
       "featured": true
     }
@@ -232,14 +235,15 @@ Sayfadaki her şey `public/links.json`'dan gelir. Telefondan:
 | `profile.name` | – | Boşsa avatar baş harfi `?` olur |
 | `profile.bio` | – | Boşsa satır hiç çizilmez |
 | `profile.avatar` | – | Boş bırakırsan baş harfler gösterilir. Dolduracaksan dosyayı `public/` içine koy ve `"/avatar.jpg"` yaz — **dış URL çalışmaz**, CSP engeller |
-| `profile.accent` | – | `#rrggbb`. Avatar, odak halkası ve öne çıkan link kenarlığı |
+| `profile.accent` | – | `#rrggbb`. Ok, odak halkası ve hover kenarlığı |
 | `credit.label` / `credit.url` | – | Footer'daki "… tarafından yapıldı" satırı. Blok silinirse satır da kaybolur |
 | `links[].slug` | ✅ | Küçük harf/rakam/`-`. `/go/<slug>` adresi ve sayaç anahtarı bu |
 | `links[].title` | ✅ | Butonda görünen yazı |
+| `links[].desc` | – | Başlığın altındaki kısa açıklama. Telefonda tek satıra sığacak kadar kısa tut |
 | `links[].url` | ✅ | `http`, `https`, `mailto` veya `tel` |
 | `links[].icon` | – | `public/` içindeki yerel dosya, `/` ile başlamalı. Dış URL kabul edilmez. Dosya yoksa emoji'ye düşer |
 | `links[].emoji` | – | İkon yoksa (veya yüklenemezse) solda görünen simge |
-| `links[].featured` | – | `true` → accent zemin + kalın kenarlık |
+| `links[].featured` | – | `true` → sayfanın tek dolu kartı |
 | `links[].active` | – | `false` → sayfada görünmez, `/go/<slug>` 404 verir; tık geçmişi `/stats`'ta arşiv olarak kalır |
 
 Linklerin **sırası** dosyadaki sıradır. Geçersiz kayıtlar (eksik alan,

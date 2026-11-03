@@ -17,6 +17,7 @@
     {
       "slug": "site",
       "title": "Web Sitem",
+      "desc": "ne yaptığını anlatan kısa cümle",
       "url": "https://ornek.com",
       "icon": "/icons/site.png",
       "emoji": "🌐",

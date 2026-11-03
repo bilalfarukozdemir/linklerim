@@ -1,9 +1,9 @@
 {
   "profile": {
     "name": "Bilal Faruk Özdemir",
-    "bio": "bilgi📍mech",
+    "bio": "Thoughtful games and practical tools",
     "avatar": "/avatar.jpg",
-    "accent": "#4f7cff"
+    "accent": "#a8884a"
   },
   "credit": {
     "label": "vitrincim.com",
@@ -13,8 +13,9 @@
     {
       "slug": "vitrincim",
       "title": "Vitrincim",
+      "desc": "web sitesi, uygulama, özel program",
       "url": "https://vitrincim.com",
-      "icon": "/icons/vitrincim.png?v=2",
+      "icon": "/icons/vitrincim.svg",
       "emoji": "🏪",
       "featured": true
     },
@@ -30,43 +31,49 @@
     {
       "slug": "ironcore-apps",
       "title": "Android Uygulamalarım",
+      "desc": "oyunlar ve araçlar · Google Play",
       "url": "https://play.google.com/store/apps/dev?id=8567376206083240739",
-      "icon": "/icons/play-store.png",
+      "icon": "/icons/play.svg",
       "emoji": ""
     },
     {
       "slug": "instagram",
       "title": "Instagram",
+      "desc": "@bilalfarukozdemir",
       "url": "https://instagram.com/bilalfarukozdemir",
-      "icon": "/icons/instagram.png",
+      "icon": "/icons/instagram.svg",
       "emoji": "📸"
     },
     {
       "slug": "github",
       "title": "GitHub",
+      "desc": "açık kaynak projelerim",
       "url": "https://github.com/bilalfarukozdemir",
-      "icon": "/icons/github.png",
+      "icon": "/icons/github.svg",
       "emoji": "💻"
     },
     {
       "slug": "sponsor",
       "title": "Projelerime Destek Ol",
+      "desc": "GitHub Sponsors",
       "url": "https://github.com/sponsors/bilalfarukozdemir",
-      "icon": "/icons/github-sponsors.png",
+      "icon": "/icons/destek.svg",
       "emoji": "💖"
     },
     {
       "slug": "linkedin",
       "title": "LinkedIn",
+      "desc": "iş geçmişim",
       "url": "https://linkedin.com/in/bilalfarukozdemir",
-      "icon": "/icons/linkedin.png",
+      "icon": "/icons/linkedin.svg",
       "emoji": "💼"
     },
     {
       "slug": "tiktok",
       "title": "TikTok",
+      "desc": "@bilalfarukozdemir",
       "url": "https://tiktok.com/@bilalfarukozdemir",
-      "icon": "/icons/tiktok.png",
+      "icon": "/icons/tiktok.svg",
       "emoji": "🎵"
     }
   ]
