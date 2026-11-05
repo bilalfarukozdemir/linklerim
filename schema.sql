@@ -24,7 +24,7 @@ CREATE INDEX IF NOT EXISTS idx_clicks_daily_day ON clicks_daily (day);
 -- ── Ders takvimi (/takvim) ───────────────────────────────────────────
 -- Tık sayacından farklı olarak burada kişisel veri VAR (öğrencinin adı ve
 -- telefonu). Yalnız D1'de durur; depoya ve herkese açık uca asla çıkmaz.
--- Herkes yalnız "dolu" görür. Geçmiş talebin kişisel alanları 90 gün sonra silinir.
+-- Herkes yalnız "dolu" görür.
 --
 -- `start`: Türkiye yerel saati, "2026-11-06T19:00". Türkiye'de yaz saati yok.
 -- Plan: Bilal'in kendi doldurduğu saat (kind='plan', status='onayli').

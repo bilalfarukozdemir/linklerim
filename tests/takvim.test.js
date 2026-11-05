@@ -297,17 +297,6 @@ test("haftalık aralık değişince sayfa ve talep kuralı değişir", async () 
 	assert.equal((await talepOlustur(talepIstegi({ start: "2026-11-06T09:00" }), { db, telegram: null, now: SIMDI })).status, 201);
 });
 
-test("90 günden eski talebin kişisel alanları temizlenir", async () => {
-	const db = sahteD1();
-	await talepOlustur(talepIstegi(), { db, telegram: null, now: SIMDI });
-	await panelIslemi(panelIstegi({ islem: "onayla", id: 1 }), { db, now: SIMDI });
-	const sonra = new Date(SIMDI.getTime() + 92 * 24 * 60 * 60 * 1000);
-	await panelVerisi({ db, now: sonra });
-	const k = kayit(db);
-	assert.equal(k.name, "");
-	assert.equal(k.phone, "");
-	assert.equal(k.start, "2026-11-06T19:00");
-});
 
 test("öğrencinin saati başka dilimde yazılır, Türkiye'de ayrıca yazılmaz", () => {
 	assert.equal(bolgeSaatYazisi("2026-11-06T19:00", "Europe/Berlin"), "6 Kasım Cuma, 17:00–18:00");

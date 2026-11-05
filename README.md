@@ -368,7 +368,7 @@ Ziyaretçi uygun saati seçer, talep Telegram'a düğmeyle düşer; onaylayınca
 kesinleşir. Kendi planlarını `/takvim/panel`den doldurursun (parola `/stats` ile
 aynı). Saatler Türkiye saatiyle saklanır, ziyaretçiye kendi yerel saatiyle gösterilir;
 yurt dışındaki öğrencinin saati Telegram mesajına da yazılır. Herkes yalnız boş ve dolu saati görür; ad, telefon ve plan başlığı açık uca
-çıkmaz. Kişisel veri yalnız D1'dedir, geçmiş talepte 90 gün sonra silinir.
+çıkmaz. Kişisel veri yalnız D1'dedir.
 
 | Kural | Değer | Nerede |
 |---|---|---|
