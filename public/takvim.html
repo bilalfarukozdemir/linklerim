@@ -36,15 +36,16 @@
 @font-face{ font-family:"DM Sans"; font-weight:100 1000; font-display:swap; src:url(/fonts/dm-sans-latin-ext-wght-normal.woff2) format("woff2"); unicode-range:U+0100-02BA,U+1E00-1E9F; }
 @font-face{ font-family:"DM Sans"; font-weight:100 1000; font-display:swap; src:url(/fonts/dm-sans-latin-wght-normal.woff2) format("woff2"); unicode-range:U+0000-00FF,U+2000-206F; }
 *{ box-sizing:border-box; }
+[hidden]{ display:none !important; }
 html{ -webkit-text-size-adjust:100%; }
 body{ margin:0; background:var(--bg); color:var(--text); font:16px/1.5 "DM Sans",system-ui,sans-serif; }
-.bas{ background:var(--navy); color:var(--cream); padding:1.75rem 1rem 1.5rem; border-bottom:3px solid var(--gold); }
+.bas{ background:var(--navy); color:var(--cream); padding:.9rem 1rem; border-bottom:3px solid var(--gold); }
 .bas div{ max-width:70rem; margin:0 auto; }
 .bas a{ color:var(--gold); font-size:.875rem; text-decoration:none; }
 .bas a:hover{ text-decoration:underline; }
-h1{ font:400 clamp(1.75rem,5vw,2.5rem)/1.15 "DM Serif Display",Georgia,serif; margin:.5rem 0 .4rem; }
-.bas p{ margin:0; color:#c9c3b4; max-width:40rem; }
-main{ max-width:70rem; margin:0 auto; padding:1.25rem 1rem 3rem; }
+h1{ font:400 1.625rem/1.15 "DM Serif Display",Georgia,serif; margin:.3rem 0 .25rem; }
+.bas p{ margin:0; color:#c9c3b4; max-width:40rem; font-size:.9375rem; }
+main{ max-width:70rem; margin:0 auto; padding:1rem 1rem 3rem; }
 .gezgin{ display:flex; align-items:center; justify-content:space-between; gap:.75rem; margin-bottom:1rem; }
 .gezgin strong{ font-weight:600; text-align:center; }
 .gezgin button{ font:inherit; font-weight:500; min-height:44px; min-width:44px; padding:0 .9rem; border:1px solid var(--border); background:var(--surface); color:var(--text); border-radius:8px; cursor:pointer; }
@@ -60,10 +61,10 @@ main{ max-width:70rem; margin:0 auto; padding:1.25rem 1rem 3rem; }
 .saat:hover{ background:var(--navy); color:var(--cream); border-color:var(--navy); }
 .saat[disabled]{ background:var(--busy-bg); color:var(--busy-text); border-color:transparent; cursor:default; font-weight:400; text-decoration:line-through; }
 .saat.kapali,.saat.kapali:hover{ background:transparent; color:var(--muted); border:1px dashed var(--border); text-decoration:none; opacity:.7; }
-.lejant{ display:flex; flex-wrap:wrap; gap:.9rem; margin:0 0 1rem; color:var(--muted); font-size:.875rem; }
+.bas .lejant{ display:flex; flex-wrap:wrap; gap:.25rem .9rem; margin-top:.5rem; font-size:.8125rem; }
 .lejant i{ display:inline-block; width:.85rem; height:.85rem; border-radius:3px; margin-right:.35rem; vertical-align:-1px; }
 .bos{ color:var(--muted); font-size:.875rem; margin:0; }
-.acik{ color:var(--muted); font-size:.875rem; margin:1rem 0 0; }
+.bas .acik{ font-size:.8125rem; margin-top:.5rem; }
 .durum{ padding:1.5rem 0; color:var(--muted); }
 .durum.hata{ color:var(--err); }
 :focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
@@ -83,6 +84,23 @@ textarea{ resize:vertical; min-height:4.5rem; }
 .dugmeler{ display:flex; gap:.5rem; margin-top:1rem; }
 .dugmeler button{ flex:1; font:inherit; font-weight:600; min-height:46px; border-radius:8px; cursor:pointer; border:1px solid var(--border); background:transparent; color:var(--text); }
 .dugmeler .ana{ background:var(--navy); color:var(--cream); border-color:var(--navy); }
+/* Bilgisayar: sol kolon + bütün hafta tek ekranda, sayfa kaymaz. Satırlar yüksekliğe göre paylaşılır. */
+@media (min-width:900px) and (min-height:480px){
+	body{ display:grid; grid-template-columns:15rem minmax(0,1fr); height:100dvh; overflow:hidden; }
+	.bas{ padding:1.25rem 1rem; border-bottom:0; border-right:3px solid var(--gold); overflow-y:auto; }
+	h1{ font-size:1.875rem; margin:.75rem 0 .5rem; }
+	.bas .lejant{ flex-direction:column; gap:.4rem; margin-top:1.25rem; }
+	.bas .acik{ margin-top:1.25rem; }
+	main{ max-width:none; width:100%; margin:0; padding:.6rem .75rem; height:100dvh; overflow-y:auto; display:flex; flex-direction:column; min-height:0; }
+	.gezgin{ margin-bottom:.5rem; }
+	.gezgin button{ min-height:34px; }
+	.izgara{ flex:1; min-height:0; gap:.4rem; grid-template-rows:minmax(0,1fr); }
+	.gun{ display:flex; flex-direction:column; min-height:0; padding:.4rem .45rem; }
+	.gun h2{ font-size:.875rem; margin:0 0 .35rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+	.gun h2 span{ display:inline; margin-left:.3rem; font-size:.75rem; }
+	.saatler{ flex:1; min-height:0; gap:.2rem; grid-template-rows:repeat(var(--satir), minmax(1.25rem, 1fr)); }
+	.saat{ min-height:0; grid-row:var(--sira); padding:0; font-size:.875rem; line-height:1; }
+}
 @media (prefers-color-scheme: dark){ .dugmeler .ana{ background:var(--gold); color:#111720; border-color:var(--gold); } .saat:hover{ background:var(--gold); color:#111720; border-color:var(--gold); } }
 .dugmeler button:disabled{ opacity:.6; cursor:wait; }
 .formhata{ color:var(--err); font-size:.9375rem; margin:.5rem 0 0; min-height:1.4em; }
@@ -94,6 +112,12 @@ textarea{ resize:vertical; min-height:4.5rem; }
 	<a href="/">← Bilal Faruk Özdemir</a>
 	<h1>Ders Takvimi</h1>
 	<p>Birebir ve online yapay zekâ dersi. Uygun bir saat seç, talebini gönder; onaylayınca sana WhatsApp'tan yazarım.</p>
+	<p class="lejant" id="lejant" hidden>
+		<span><i style="border:1px solid var(--gold)"></i>Boş, seçilebilir</span>
+		<span><i style="background:#6d7078"></i>Dolu</span>
+		<span><i style="border:1px dashed #8b93a0"></i>Kapalı</span>
+	</p>
+	<p class="acik" id="acik" hidden></p>
 </div></header>
 <main>
 	<div class="gezgin" id="gezgin" hidden>
@@ -101,14 +125,8 @@ textarea{ resize:vertical; min-height:4.5rem; }
 		<strong id="aralik" aria-live="polite"></strong>
 		<button type="button" id="ileri" aria-label="Sonraki hafta">→</button>
 	</div>
-	<p class="lejant" id="lejant" hidden>
-		<span><i style="border:1px solid var(--free-border);background:var(--free-bg)"></i>Boş, seçilebilir</span>
-		<span><i style="background:var(--busy-bg)"></i>Dolu</span>
-		<span><i style="border:1px dashed var(--border);opacity:.7"></i>Kapalı</span>
-	</p>
 	<div class="izgara" id="izgara"></div>
 	<p class="durum" id="durum">Takvim yükleniyor…</p>
-	<p class="acik" id="acik" hidden></p>
 </main>
 
 <dialog id="pencere" aria-labelledby="pencereBaslik">
@@ -163,6 +181,11 @@ textarea{ resize:vertical; min-height:4.5rem; }
 		$("geri").disabled = hafta === 0;
 		$("ileri").disabled = (hafta + 1) * 7 >= gunler.length;
 
+		// Aynı saat her günde aynı satırda dursun; geçmiş saatin yeri boş kalır.
+		var varOlan = {};
+		dilim.forEach(function (g) { g.saatler.forEach(function (s) { varOlan[s.saat] = true; }); });
+		var satirlar = Object.keys(varOlan).sort();
+
 		var kutular = dilim.map(function (g) {
 			var kutu = document.createElement("section");
 			kutu.className = "gun";
@@ -182,11 +205,13 @@ textarea{ resize:vertical; min-height:4.5rem; }
 			}
 			var liste = document.createElement("div");
 			liste.className = "saatler";
+			liste.style.setProperty("--satir", satirlar.length);
 			g.saatler.forEach(function (s) {
 				var d = document.createElement("button");
 				d.type = "button";
 				d.className = "saat";
 				d.textContent = s.saat;
+				d.style.setProperty("--sira", satirlar.indexOf(s.saat) + 1);
 				if (s.durum === "dolu") {
 					d.disabled = true;
 					d.setAttribute("aria-label", s.saat + " dolu");
