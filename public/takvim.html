@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ders Takvimi — Bilal Faruk Özdemir</title>
+<meta name="description" content="Birebir online yapay zekâ dersi için uygun saati seç, talebini gönder.">
+<link rel="canonical" href="https://link.vitrincim.com/takvim">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Ders Takvimi — Bilal Faruk Özdemir">
+<meta property="og:description" content="Birebir online yapay zekâ dersi için uygun saati seç, talebini gönder.">
+<meta property="og:url" content="https://link.vitrincim.com/takvim">
+<meta property="og:image" content="https://link.vitrincim.com/og.png">
+<meta property="og:locale" content="tr_TR">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#1d2b3a">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231d2b3a'/%3E%3Crect x='14' y='18' width='36' height='32' rx='4' fill='none' stroke='%23d9b45f' stroke-width='4'/%3E%3Cpath d='M14 28h36M24 13v9M40 13v9' stroke='%23d9b45f' stroke-width='4'/%3E%3C/svg%3E">
+<style>
+:root{
+	color-scheme: light;
+	--bg:#eeeae3; --surface:#fbf8f1; --border:#d6cebd; --text:#111720; --muted:#5d6470;
+	--accent:#8a6d33; --navy:#1d2b3a; --gold:#d9b45f; --cream:#f7f1e4;
+	--free-bg:#fbf8f1; --free-text:#111720; --free-border:#a8884a;
+	--busy-bg:#e2dcd0; --busy-text:#6d7078; --err:#a3281e; --ok:#23633c;
+}
+@media (prefers-color-scheme: dark){
+	:root{
+		color-scheme: dark;
+		--bg:#0d1219; --surface:#18222e; --border:#2b3948; --text:#f1ece0; --muted:#a3abb6;
+		--accent:#d9b45f; --free-bg:#18222e; --free-text:#f1ece0; --free-border:#d9b45f;
+		--busy-bg:#141c26; --busy-text:#8b93a0; --err:#ff9d92; --ok:#8ad9a6;
+	}
+}
+@font-face{ font-family:"DM Serif Display"; font-display:swap; src:url(/fonts/dm-serif-display-latin-ext-400-normal.woff2) format("woff2"); unicode-range:U+0100-02BA,U+1E00-1E9F; }
+@font-face{ font-family:"DM Serif Display"; font-display:swap; src:url(/fonts/dm-serif-display-latin-400-normal.woff2) format("woff2"); unicode-range:U+0000-00FF,U+2000-206F; }
+@font-face{ font-family:"DM Sans"; font-weight:100 1000; font-display:swap; src:url(/fonts/dm-sans-latin-ext-wght-normal.woff2) format("woff2"); unicode-range:U+0100-02BA,U+1E00-1E9F; }
+@font-face{ font-family:"DM Sans"; font-weight:100 1000; font-display:swap; src:url(/fonts/dm-sans-latin-wght-normal.woff2) format("woff2"); unicode-range:U+0000-00FF,U+2000-206F; }
+*{ box-sizing:border-box; }
+html{ -webkit-text-size-adjust:100%; }
+body{ margin:0; background:var(--bg); color:var(--text); font:16px/1.5 "DM Sans",system-ui,sans-serif; }
+.bas{ background:var(--navy); color:var(--cream); padding:1.75rem 1rem 1.5rem; border-bottom:3px solid var(--gold); }
+.bas div{ max-width:70rem; margin:0 auto; }
+.bas a{ color:var(--gold); font-size:.875rem; text-decoration:none; }
+.bas a:hover{ text-decoration:underline; }
+h1{ font:400 clamp(1.75rem,5vw,2.5rem)/1.15 "DM Serif Display",Georgia,serif; margin:.5rem 0 .4rem; }
+.bas p{ margin:0; color:#c9c3b4; max-width:40rem; }
+main{ max-width:70rem; margin:0 auto; padding:1.25rem 1rem 3rem; }
+.gezgin{ display:flex; align-items:center; justify-content:space-between; gap:.75rem; margin-bottom:1rem; }
+.gezgin strong{ font-weight:600; text-align:center; }
+.gezgin button{ font:inherit; font-weight:500; min-height:44px; min-width:44px; padding:0 .9rem; border:1px solid var(--border); background:var(--surface); color:var(--text); border-radius:8px; cursor:pointer; }
+.gezgin button:disabled{ opacity:.4; cursor:default; }
+.izgara{ display:grid; gap:.75rem; }
+@media (min-width:900px){ .izgara{ grid-template-columns:repeat(7,minmax(0,1fr)); gap:.5rem; } }
+.gun{ background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:.75rem; min-width:0; }
+.gun h2{ font-size:.9375rem; font-weight:600; margin:0 0 .6rem; }
+.gun h2 span{ display:block; color:var(--muted); font-size:.8125rem; font-weight:400; }
+.saatler{ display:grid; grid-template-columns:repeat(auto-fill,minmax(4.5rem,1fr)); gap:.4rem; }
+@media (min-width:900px){ .saatler{ grid-template-columns:minmax(0,1fr); } }
+.saat{ font:inherit; font-size:.9375rem; font-variant-numeric:tabular-nums; min-height:44px; padding:0 .25rem; border-radius:7px; border:1px solid var(--free-border); background:var(--free-bg); color:var(--free-text); font-weight:500; cursor:pointer; }
+.saat:hover{ background:var(--navy); color:var(--cream); border-color:var(--navy); }
+.saat[disabled]{ background:var(--busy-bg); color:var(--busy-text); border-color:transparent; cursor:default; font-weight:400; text-decoration:line-through; }
+.bos{ color:var(--muted); font-size:.875rem; margin:0; }
+.acik{ color:var(--muted); font-size:.875rem; margin:1rem 0 0; }
+.durum{ padding:1.5rem 0; color:var(--muted); }
+.durum.hata{ color:var(--err); }
+:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+dialog{ border:1px solid var(--border); border-radius:12px; background:var(--surface); color:var(--text); padding:1.25rem; width:min(28rem,calc(100vw - 2rem)); max-height:calc(100dvh - 2rem); overflow:auto; }
+dialog::backdrop{ background:rgba(13,18,25,.6); }
+dialog h2{ font:400 1.5rem/1.2 "DM Serif Display",Georgia,serif; margin:0 0 .15rem; }
+.secilen{ color:var(--accent); font-weight:600; margin:0 0 1rem; }
+label{ display:block; font-weight:500; font-size:.9375rem; margin-bottom:.8rem; }
+label small{ display:block; color:var(--muted); font-weight:400; font-size:.8125rem; }
+input[type=text],input[type=tel],select,textarea{ display:block; width:100%; margin-top:.25rem; font:inherit; color:var(--text); background:var(--bg); border:1px solid var(--border); border-radius:7px; padding:.6rem .7rem; min-height:44px; }
+textarea{ resize:vertical; min-height:4.5rem; }
+.onay{ display:flex; gap:.6rem; align-items:flex-start; font-weight:400; font-size:.875rem; color:var(--muted); }
+.onay input{ margin:.2rem 0 0; width:1.1rem; height:1.1rem; flex:none; accent-color:var(--navy); }
+.tuzak{ position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden; }
+.dugmeler{ display:flex; gap:.5rem; margin-top:1rem; }
+.dugmeler button{ flex:1; font:inherit; font-weight:600; min-height:46px; border-radius:8px; cursor:pointer; border:1px solid var(--border); background:transparent; color:var(--text); }
+.dugmeler .ana{ background:var(--navy); color:var(--cream); border-color:var(--navy); }
+@media (prefers-color-scheme: dark){ .dugmeler .ana{ background:var(--gold); color:#111720; border-color:var(--gold); } .saat:hover{ background:var(--gold); color:#111720; border-color:var(--gold); } }
+.dugmeler button:disabled{ opacity:.6; cursor:wait; }
+.formhata{ color:var(--err); font-size:.9375rem; margin:.5rem 0 0; min-height:1.4em; }
+.tamam{ color:var(--ok); font-weight:600; }
+</style>
+</head>
+<body>
+<header class="bas"><div>
+	<a href="/">← Bilal Faruk Özdemir</a>
+	<h1>Ders Takvimi</h1>
+	<p>Birebir ve online yapay zekâ dersi. Uygun bir saat seç, talebini gönder; onaylayınca sana WhatsApp'tan yazarım.</p>
+</div></header>
+<main>
+	<div class="gezgin" id="gezgin" hidden>
+		<button type="button" id="geri" aria-label="Önceki hafta">←</button>
+		<strong id="aralik" aria-live="polite"></strong>
+		<button type="button" id="ileri" aria-label="Sonraki hafta">→</button>
+	</div>
+	<div class="izgara" id="izgara"></div>
+	<p class="durum" id="durum">Takvim yükleniyor…</p>
+	<p class="acik" id="acik" hidden></p>
+</main>
+
+<dialog id="pencere" aria-labelledby="pencereBaslik">
+	<div id="formAlan">
+		<h2 id="pencereBaslik">Ders talebi</h2>
+		<p class="secilen" id="secilen"></p>
+		<form id="form" novalidate>
+			<label>Adın soyadın
+				<input type="text" name="name" autocomplete="name" maxlength="80" required>
+			</label>
+			<label>Telefon (WhatsApp)
+				<small>18 yaşından küçüksen velinin numarasını yaz.</small>
+				<input type="tel" name="phone" autocomplete="tel" inputmode="tel" placeholder="05xx xxx xx xx" required>
+			</label>
+			<label>Not <small>İsteğe bağlı: seviyen, ne öğrenmek istediğin.</small>
+				<textarea name="note" maxlength="300"></textarea>
+			</label>
+			<label class="tuzak" aria-hidden="true">Web siteniz
+				<input type="text" name="site" tabindex="-1" autocomplete="off">
+			</label>
+			<label class="onay">
+				<input type="checkbox" name="onay" required>
+				<span>Adımın ve telefonumun yalnız bu dersi ayarlamak için Bilal Faruk Özdemir'e iletilmesini kabul ediyorum. Bu bilgiler dersin tarihinden 90 gün sonra silinir; takvimde başkalarına görünmez.</span>
+			</label>
+			<p class="formhata" id="formHata" role="alert"></p>
+			<div class="dugmeler">
+				<button type="button" id="vazgec">Vazgeç</button>
+				<button type="submit" class="ana" id="gonder">Talebi gönder</button>
+			</div>
+		</form>
+	</div>
+	<div id="sonuc" hidden>
+		<h2>Talebin alındı</h2>
+		<p class="tamam" id="sonucSaat"></p>
+		<p>Saat senin için ayrıldı. Bilal onaylayınca WhatsApp'tan yazacak; 24 saat içinde cevap gelmezse saat yeniden boşa çıkar.</p>
+		<div class="dugmeler"><button type="button" class="ana" id="kapat">Tamam</button></div>
+	</div>
+</dialog>
+
+<script>
+(function () {
+	var $ = function (id) { return document.getElementById(id); };
+	var AYLAR = ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
+	var gunler = [];
+	var hafta = 0;
+	var secili = null;
+
+	function tarih(gun) {
+		var p = gun.split("-");
+		return Number(p[2]) + " " + AYLAR[Number(p[1]) - 1];
+	}
+
+	function saatEtiketi(start) { return start.slice(11, 16); }
+
+	function ciz() {
+		var dilim = gunler.slice(hafta * 7, hafta * 7 + 7);
+		$("aralik").textContent = tarih(dilim[0].gun) + " – " + tarih(dilim[dilim.length - 1].gun);
+		$("geri").disabled = hafta === 0;
+		$("ileri").disabled = (hafta + 1) * 7 >= gunler.length;
+
+		var kutular = dilim.map(function (g) {
+			var kutu = document.createElement("section");
+			kutu.className = "gun";
+			var baslik = document.createElement("h2");
+			baslik.textContent = g.ad;
+			var alt = document.createElement("span");
+			alt.textContent = tarih(g.gun);
+			baslik.appendChild(alt);
+			kutu.appendChild(baslik);
+
+			if (!g.saatler.length) {
+				var yok = document.createElement("p");
+				yok.className = "bos";
+				yok.textContent = "Uygun saat yok";
+				kutu.appendChild(yok);
+				return kutu;
+			}
+			var liste = document.createElement("div");
+			liste.className = "saatler";
+			g.saatler.forEach(function (s) {
+				var d = document.createElement("button");
+				d.type = "button";
+				d.className = "saat";
+				d.textContent = saatEtiketi(s.start);
+				if (s.durum === "dolu") {
+					d.disabled = true;
+					d.setAttribute("aria-label", saatEtiketi(s.start) + " dolu");
+				} else {
+					d.setAttribute("aria-label", g.ad + " " + tarih(g.gun) + " " + saatEtiketi(s.start) + " seç");
+					d.addEventListener("click", function () { ac(g, s.start); });
+				}
+				liste.appendChild(d);
+			});
+			kutu.appendChild(liste);
+			return kutu;
+		});
+		$("izgara").replaceChildren.apply($("izgara"), kutular);
+	}
+
+	function ac(g, start) {
+		var saat = Number(start.slice(11, 13));
+		var bitis = String((saat + 1) % 24).padStart(2, "0") + ":00";
+		secili = start;
+		$("secilen").textContent = tarih(g.gun) + " " + g.ad + ", " + saatEtiketi(start) + "–" + bitis;
+		$("formHata").textContent = "";
+		$("formAlan").hidden = false;
+		$("sonuc").hidden = true;
+		$("pencere").showModal();
+	}
+
+	function yukle() {
+		return fetch("/takvim/musait", { cache: "no-store" }).then(function (y) {
+			return y.json().then(function (v) {
+				if (!y.ok) throw new Error(v.hata || "Takvim okunamadı.");
+				return v;
+			});
+		}).then(function (v) {
+			gunler = v.gunler;
+			$("acik").textContent = "Her blok 1 saat, Türkiye saatiyle. En erken " + v.enAzSaat + " saat sonrası seçilebilir.";
+			$("acik").hidden = false;
+			$("gezgin").hidden = false;
+			$("durum").hidden = true;
+			ciz();
+		});
+	}
+
+	$("geri").addEventListener("click", function () { hafta--; ciz(); });
+	$("ileri").addEventListener("click", function () { hafta++; ciz(); });
+	$("vazgec").addEventListener("click", function () { $("pencere").close(); });
+	$("kapat").addEventListener("click", function () { $("pencere").close(); });
+
+	$("form").addEventListener("submit", function (olay) {
+		olay.preventDefault();
+		var f = olay.target;
+		var hata = $("formHata");
+		hata.textContent = "";
+		$("gonder").disabled = true;
+		fetch("/takvim/talep", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				start: secili,
+				name: f.name.value,
+				phone: f.phone.value,
+				note: f.note.value,
+				site: f.site.value,
+				onay: f.onay.checked
+			})
+		}).then(function (y) {
+			return y.json().catch(function () { return {}; }).then(function (v) {
+				if (y.ok) {
+					$("sonucSaat").textContent = $("secilen").textContent;
+					$("formAlan").hidden = true;
+					$("sonuc").hidden = false;
+					f.reset();
+					return yukle();
+				}
+				hata.textContent = v.hata || "Talep gönderilemedi, yeniden dene.";
+				if (v.dolu) return yukle();
+			});
+		}).catch(function () {
+			hata.textContent = "Bağlantı kurulamadı, yeniden dene.";
+		}).then(function () {
+			$("gonder").disabled = false;
+		});
+	});
+
+	yukle().catch(function (e) {
+		$("durum").textContent = e.message === "Failed to fetch" ? "Bağlantı kurulamadı, sayfayı yenile." : e.message;
+		$("durum").classList.add("hata");
+	});
+})();
+</script>
+</body>
+</html>

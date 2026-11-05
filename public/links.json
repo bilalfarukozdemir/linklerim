@@ -29,6 +29,14 @@
       "featured": true
     },
     {
+      "slug": "takvim",
+      "title": "Ders Takvimi",
+      "desc": "birebir yapay zekâ dersi · saat seç",
+      "url": "https://link.vitrincim.com/takvim",
+      "icon": "/icons/takvim.svg",
+      "emoji": "🗓️"
+    },
+    {
       "slug": "ironcore-apps",
       "title": "Android Uygulamalarım",
       "desc": "oyunlar ve araçlar · Google Play",

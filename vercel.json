@@ -6,7 +6,13 @@
 
   "rewrites": [
     { "source": "/go/:slug", "destination": "/api/go/:slug" },
-    { "source": "/stats", "destination": "/api/stats" }
+    { "source": "/stats", "destination": "/api/stats" },
+    { "source": "/takvim", "destination": "/takvim.html" },
+    { "source": "/takvim/musait", "destination": "/api/takvim/musait" },
+    { "source": "/takvim/talep", "destination": "/api/takvim/talep" },
+    { "source": "/takvim/telegram", "destination": "/api/takvim/telegram" },
+    { "source": "/takvim/panel", "destination": "/api/takvim/panel" },
+    { "source": "/takvim/yonet", "destination": "/api/takvim/yonet" }
   ],
 
   "headers": [

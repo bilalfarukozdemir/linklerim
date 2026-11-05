@@ -328,7 +328,7 @@ veritabanı çökse bile link çalışmaya devam eder.
 ```bash
 npx vercel env pull .env.local   # ortam değişkenlerini indir (repoya girmez)
 npx vercel dev                   # http://localhost:3000
-npm test                         # 36 test, bağımlılık yok
+npm test                         # testler, bağımlılık yok
 ```
 
 Veritabanına bakmak:
@@ -362,10 +362,37 @@ sadece artık HTTP API üzerinden yazılıyor.
 
 ---
 
-## 11. Kapsam dışı — bilinçli olarak yok
+## 11. Ders takvimi (/takvim)
 
-VPS/Docker/nginx yok, build pipeline yok, framework yok, hesap sistemi/admin
-paneli yok, üçüncü parti analytics yok, e-posta toplama yok, otomatik OG
+Ziyaretçi uygun saati seçer, talep Telegram'a düğmeyle düşer; onaylayınca ders
+kesinleşir. Kendi planlarını `/takvim/panel`den doldurursun (parola `/stats` ile
+aynı). Herkes yalnız boş ve dolu saati görür; ad, telefon ve plan başlığı açık uca
+çıkmaz. Kişisel veri yalnız D1'dedir, geçmiş talepte 90 gün sonra silinir.
+
+| Kural | Değer | Nerede |
+|---|---|---|
+| Haftalık açık saatler | Panelden; varsayılan hafta içi 19–23, hafta sonu 10–23 | `VARSAYILAN_HAFTA` |
+| En erken talep | 3 saat sonrası | `EN_AZ_SAAT` |
+| Kaç gün ileri | 28 | `UFUK_GUN` |
+| Cevapsız talep saati ne zaman boşaltır | 24 saat | `BEKLEME_SAAT` |
+
+Kurulum:
+
+1. `npm run db:remote` — takvim tablolarını D1'e ekler, tık verisine dokunmaz.
+2. Telegram'da @BotFather ile bot aç, botuna `/start` yaz.
+3. `node scripts/takvim-telegram-kur.mjs` — token'ı sorar, sohbet kimliğini bulur,
+   webhook'u kurar, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` ve
+   `TELEGRAM_WEBHOOK_SECRET` değerlerini Vercel'e yazar.
+4. Yeniden deploy et. Ortam değişkeni ancak yeni deploy'da geçerli olur.
+
+Telegram ayarlı değilse talep yine kaydedilir, panelde görünür.
+
+---
+
+## 12. Kapsam dışı — bilinçli olarak yok
+
+VPS/Docker/nginx yok, build pipeline yok, framework yok, hesap sistemi yok
+(tek yönetim yüzü parolalı `/stats` ve `/takvim/panel`), üçüncü parti analytics yok, e-posta toplama yok, otomatik OG
 üretimi yok.
 
 Toplam runtime bağımlılığı: **sıfır**.
