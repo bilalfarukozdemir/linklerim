@@ -2,13 +2,16 @@
 
 import test from "node:test";
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import { sahteD1 } from "./_sahte-d1.js";
 import {
 	VARSAYILAN_HAFTA,
+	bolgeSaatYazisi,
 	gecerliSaatMi,
 	haftaDogrula,
 	haftaDuzelt,
 	musaitGunler,
+	saatDilimiDuzelt,
 	saatYazisi,
 	talebeAcikMi,
 	talepDogrula,
@@ -304,4 +307,70 @@ test("90 günden eski talebin kişisel alanları temizlenir", async () => {
 	assert.equal(k.name, "");
 	assert.equal(k.phone, "");
 	assert.equal(k.start, "2026-11-06T19:00");
+});
+
+test("öğrencinin saati başka dilimde yazılır, Türkiye'de ayrıca yazılmaz", () => {
+	assert.equal(bolgeSaatYazisi("2026-11-06T19:00", "Europe/Berlin"), "6 Kasım Cuma, 17:00–18:00");
+	assert.equal(bolgeSaatYazisi("2026-11-06T22:00", "Asia/Tokyo"), "7 Kasım Cumartesi, 04:00–05:00");
+	assert.equal(bolgeSaatYazisi("2026-11-06T19:00", "Asia/Kolkata"), "6 Kasım Cuma, 21:30–22:30");
+	assert.equal(bolgeSaatYazisi("2026-11-07T10:00", "America/New_York"), "7 Kasım Cumartesi, 02:00–03:00");
+	assert.equal(bolgeSaatYazisi("2026-11-06T19:00", "Europe/Istanbul"), null);
+	assert.equal(bolgeSaatYazisi("2026-11-06T19:00", ""), null);
+	assert.equal(bolgeSaatYazisi("2026-11-06T19:00", "Yok/Boyle"), null);
+});
+
+test("bozuk saat dilimi talebi engellemez, boş kaydedilir", () => {
+	assert.equal(saatDilimiDuzelt("Europe/Berlin"), "Europe/Berlin");
+	assert.equal(saatDilimiDuzelt("Yok/Boyle"), "");
+	assert.equal(saatDilimiDuzelt("<script>"), "");
+	assert.equal(saatDilimiDuzelt(null), "");
+});
+
+test("yurt dışındaki öğrencinin saati Telegram'a ve WhatsApp mesajına geçer", async () => {
+	const db = sahteD1();
+	const telegram = sahteTelegram();
+	await talepOlustur(talepIstegi({ tz: "Europe/Berlin" }), { db, telegram, now: SIMDI });
+	assert.match(telegram.giden[0].text, /🗓 6 Kasım Cuma, 19:00–20:00/);
+	assert.match(telegram.giden[0].text, /Öğrencinin saati: 6 Kasım Cuma, 17:00–18:00 \(Europe\/Berlin\)/);
+	await telegramWebhook(dugme("t:onay:1"), { db, telegram, sir: "sir", now: SIMDI });
+	const url = telegram.giden.find((g) => g.tur === "duzenle").dugmeler[0][0].url;
+	assert.match(decodeURIComponent(url), /17:00–18:00 \(senin saatinle\)/);
+});
+
+/** Tarayıcı kodunu gerçek saat dilimiyle ayrı süreçte çalıştırır. */
+function gruplaDilimde(tz, gunler, simdi) {
+	const kod = `require(${JSON.stringify(new URL("../public/takvim-saat.js", import.meta.url).pathname)});
+		console.log(JSON.stringify(globalThis.TakvimSaat.grupla(${JSON.stringify(gunler)}, new Date(${JSON.stringify(simdi)}))));`;
+	const c = spawnSync(process.execPath, ["--input-type=commonjs", "-e", kod], { env: { ...process.env, TZ: tz }, encoding: "utf8" });
+	assert.equal(c.status, 0, c.stderr);
+	return JSON.parse(c.stdout);
+}
+
+test("tarayıcı: saatler ziyaretçinin dilimine ve gününe taşınır", () => {
+	const gunler = [
+		{ gun: "2026-11-06", saatler: [{ start: "2026-11-06T19:00", durum: "bos" }, { start: "2026-11-06T22:00", durum: "dolu" }] },
+		{ gun: "2026-11-07", saatler: [{ start: "2026-11-07T10:00", durum: "bos" }] },
+	];
+	const simdi = "2026-11-06T06:00:00Z";
+
+	const istanbul = gruplaDilimde("Europe/Istanbul", gunler, simdi);
+	assert.equal(istanbul[0].gun, "2026-11-06");
+	assert.deepEqual(istanbul[0].saatler.map((s) => s.saat), ["19:00", "22:00"]);
+	assert.equal(istanbul[0].saatler[0].turkiyeden, false);
+
+	const tokyo = gruplaDilimde("Asia/Tokyo", gunler, simdi);
+	assert.equal(tokyo[0].gun, "2026-11-06");
+	assert.deepEqual(tokyo[0].saatler, []);
+	assert.equal(tokyo[1].ad, "Cumartesi");
+	assert.deepEqual(tokyo[1].saatler.map((s) => s.saat), ["01:00", "04:00", "16:00"]);
+	assert.equal(tokyo[1].saatler[0].turkiyeden, true);
+	assert.equal(tokyo[1].saatler[0].start, "2026-11-06T19:00", "sunucuya Türkiye saati gider");
+	assert.equal(tokyo[1].saatler[1].durum, "dolu");
+
+	const hindistan = gruplaDilimde("Asia/Kolkata", gunler, simdi);
+	assert.equal(hindistan[0].saatler[0].aralik, "21:30–22:30");
+
+	const newYork = gruplaDilimde("America/New_York", gunler, simdi);
+	assert.deepEqual(newYork[0].saatler.map((s) => s.saat), ["11:00", "14:00"]);
+	assert.deepEqual(newYork[1].saatler.map((s) => s.saat), ["02:00"]);
 });

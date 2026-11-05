@@ -68,6 +68,8 @@ dialog{ border:1px solid var(--border); border-radius:12px; background:var(--sur
 dialog::backdrop{ background:rgba(13,18,25,.6); }
 dialog h2{ font:400 1.5rem/1.2 "DM Serif Display",Georgia,serif; margin:0 0 .15rem; }
 .secilen{ color:var(--accent); font-weight:600; margin:0 0 1rem; }
+.secilen:has(+ .turkiye:not([hidden])){ margin-bottom:0; }
+.turkiye{ color:var(--muted); font-size:.875rem; margin:0 0 1rem; }
 label{ display:block; font-weight:500; font-size:.9375rem; margin-bottom:.8rem; }
 label small{ display:block; color:var(--muted); font-weight:400; font-size:.8125rem; }
 input[type=text],input[type=tel],select,textarea{ display:block; width:100%; margin-top:.25rem; font:inherit; color:var(--text); background:var(--bg); border:1px solid var(--border); border-radius:7px; padding:.6rem .7rem; min-height:44px; }
@@ -105,6 +107,7 @@ textarea{ resize:vertical; min-height:4.5rem; }
 	<div id="formAlan">
 		<h2 id="pencereBaslik">Ders talebi</h2>
 		<p class="secilen" id="secilen"></p>
+		<p class="turkiye" id="turkiye" hidden></p>
 		<form id="form" novalidate>
 			<label>Adın soyadın
 				<input type="text" name="name" autocomplete="name" maxlength="80" required>
@@ -138,24 +141,17 @@ textarea{ resize:vertical; min-height:4.5rem; }
 	</div>
 </dialog>
 
+<script src="/takvim-saat.js"></script>
 <script>
 (function () {
 	var $ = function (id) { return document.getElementById(id); };
-	var AYLAR = ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
 	var gunler = [];
 	var hafta = 0;
 	var secili = null;
 
-	function tarih(gun) {
-		var p = gun.split("-");
-		return Number(p[2]) + " " + AYLAR[Number(p[1]) - 1];
-	}
-
-	function saatEtiketi(start) { return start.slice(11, 16); }
-
 	function ciz() {
 		var dilim = gunler.slice(hafta * 7, hafta * 7 + 7);
-		$("aralik").textContent = tarih(dilim[0].gun) + " – " + tarih(dilim[dilim.length - 1].gun);
+		$("aralik").textContent = dilim[0].tarih + " – " + dilim[dilim.length - 1].tarih;
 		$("geri").disabled = hafta === 0;
 		$("ileri").disabled = (hafta + 1) * 7 >= gunler.length;
 
@@ -165,7 +161,7 @@ textarea{ resize:vertical; min-height:4.5rem; }
 			var baslik = document.createElement("h2");
 			baslik.textContent = g.ad;
 			var alt = document.createElement("span");
-			alt.textContent = tarih(g.gun);
+			alt.textContent = g.tarih;
 			baslik.appendChild(alt);
 			kutu.appendChild(baslik);
 
@@ -182,13 +178,13 @@ textarea{ resize:vertical; min-height:4.5rem; }
 				var d = document.createElement("button");
 				d.type = "button";
 				d.className = "saat";
-				d.textContent = saatEtiketi(s.start);
+				d.textContent = s.saat;
 				if (s.durum === "dolu") {
 					d.disabled = true;
-					d.setAttribute("aria-label", saatEtiketi(s.start) + " dolu");
+					d.setAttribute("aria-label", s.saat + " dolu");
 				} else {
-					d.setAttribute("aria-label", g.ad + " " + tarih(g.gun) + " " + saatEtiketi(s.start) + " seç");
-					d.addEventListener("click", function () { ac(g, s.start); });
+					d.setAttribute("aria-label", g.ad + " " + g.tarih + " " + s.saat + " seç");
+					d.addEventListener("click", function () { ac(g, s); });
 				}
 				liste.appendChild(d);
 			});
@@ -198,11 +194,11 @@ textarea{ resize:vertical; min-height:4.5rem; }
 		$("izgara").replaceChildren.apply($("izgara"), kutular);
 	}
 
-	function ac(g, start) {
-		var saat = Number(start.slice(11, 13));
-		var bitis = String((saat + 1) % 24).padStart(2, "0") + ":00";
-		secili = start;
-		$("secilen").textContent = tarih(g.gun) + " " + g.ad + ", " + saatEtiketi(start) + "–" + bitis;
+	function ac(g, s) {
+		secili = s.start;
+		$("secilen").textContent = g.tarih + " " + g.ad + ", " + s.aralik;
+		$("turkiye").textContent = s.turkiyeden ? "Türkiye saatiyle " + s.turkiyeYazisi : "";
+		$("turkiye").hidden = !s.turkiyeden;
 		$("formHata").textContent = "";
 		$("formAlan").hidden = false;
 		$("sonuc").hidden = true;
@@ -216,8 +212,10 @@ textarea{ resize:vertical; min-height:4.5rem; }
 				return v;
 			});
 		}).then(function (v) {
-			gunler = v.gunler;
-			$("acik").textContent = "Her blok 1 saat, Türkiye saatiyle. En erken " + v.enAzSaat + " saat sonrası seçilebilir.";
+			gunler = TakvimSaat.grupla(v.gunler);
+			if ((hafta + 1) * 7 > gunler.length + 6) hafta = 0;
+			var dilim = TakvimSaat.saatDilimi();
+			$("acik").textContent = "Saatler senin yerel saatinle gösteriliyor" + (dilim ? " (" + dilim + ")" : "") + ". Her blok 1 saat, en erken " + v.enAzSaat + " saat sonrası seçilebilir.";
 			$("acik").hidden = false;
 			$("gezgin").hidden = false;
 			$("durum").hidden = true;
@@ -245,6 +243,7 @@ textarea{ resize:vertical; min-height:4.5rem; }
 				phone: f.phone.value,
 				note: f.note.value,
 				site: f.site.value,
+				tz: TakvimSaat.saatDilimi(),
 				onay: f.onay.checked
 			})
 		}).then(function (y) {

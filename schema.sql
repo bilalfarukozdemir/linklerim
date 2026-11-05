@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS takvim_kayit (
   phone      TEXT NOT NULL DEFAULT '',
   topic      TEXT NOT NULL DEFAULT '',
   note       TEXT NOT NULL DEFAULT '',
+  tz         TEXT NOT NULL DEFAULT '',   -- öğrencinin saat dilimi, örn. Europe/Berlin
   created_at TEXT NOT NULL,
   decided_at TEXT
 );
