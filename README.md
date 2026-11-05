@@ -373,8 +373,8 @@ yurt dışındaki öğrencinin saati Telegram mesajına da yazılır. Herkes bü
 | Kural | Değer | Nerede |
 |---|---|---|
 | Haftalık açık saatler | Panelden; varsayılan hafta içi 19–23, hafta sonu 10–23 | `VARSAYILAN_HAFTA` |
-| Bir kerelik saat | Panelde kapalı saate dokun, "Öğrenciye aç"; 3 saat kuralına bakmaz | `takvim_ek_saat` |
-| En erken talep | 3 saat sonrası | `EN_AZ_SAAT` |
+| Bir kerelik saat | Panelde kapalı saate dokun, "Öğrenciye aç"; en erken talep kuralına bakmaz | `takvim_ek_saat` |
+| En erken talep | 2 saat sonrası | `EN_AZ_SAAT` |
 | Kaç gün ileri | 28 | `UFUK_GUN` |
 | Cevapsız talep saati ne zaman boşaltır | 24 saat | `BEKLEME_SAAT` |
 

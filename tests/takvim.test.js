@@ -80,7 +80,7 @@ test("saat yazısı Türkçe ve gece yarısını doğru gösterir", () => {
 	assert.equal(saatYazisi("2026-11-06T23:00"), "6 Kasım Cuma, 23:00–00:00");
 });
 
-test("talep yalnız haftalık aralıkta, 3 saat sonrasından 28 gün içine alınır", () => {
+test("talep yalnız haftalık aralıkta, 2 saat sonrasından 28 gün içine alınır", () => {
 	assert.equal(talebeAcikMi("2026-11-06T19:00", HAFTA, SIMDI), true);
 	assert.equal(talebeAcikMi("2026-11-06T18:00", HAFTA, SIMDI), false, "hafta içi 19 öncesi");
 	assert.equal(talebeAcikMi("2026-11-06T23:00", HAFTA, SIMDI), false, "son blok 22-23");
@@ -88,8 +88,9 @@ test("talep yalnız haftalık aralıkta, 3 saat sonrasından 28 gün içine alı
 	assert.equal(talebeAcikMi("2026-12-02T19:00", HAFTA, SIMDI), true, "28. gün");
 	assert.equal(talebeAcikMi("2026-12-03T19:00", HAFTA, SIMDI), false, "ufuk dışı");
 	const aksam = new Date("2026-11-05T16:30:00Z"); // 19:30
-	assert.equal(talebeAcikMi("2026-11-05T22:00", HAFTA, aksam), false, "3 saatten yakın");
-	assert.equal(talebeAcikMi("2026-11-05T22:00", HAFTA, new Date("2026-11-05T16:00:00Z")), true);
+	assert.equal(talebeAcikMi("2026-11-05T21:00", HAFTA, aksam), false, "2 saatten yakın");
+	assert.equal(talebeAcikMi("2026-11-05T22:00", HAFTA, aksam), true, "2,5 saat sonra");
+	assert.equal(talebeAcikMi("2026-11-05T21:00", HAFTA, new Date("2026-11-05T16:00:00Z")), true, "tam 2 saat");
 });
 
 test("bütün hafta görünür: açık olmayan saat kapalıdır, geçmiş saat listelenmez", () => {
@@ -427,7 +428,7 @@ test("kapalı saat bir kerelik açılır, yalnız o tarihte geçerlidir, geri al
 	assert.equal((await talepOlustur(talepIstegi({ start: "2026-11-09T12:00", phone: "05329998877" }), { db, telegram: null, now: SIMDI })).status, 400);
 });
 
-test("bir kerelik saat 3 saat kuralına bakmaz ama vakti geçmişse açılmaz", async () => {
+test("bir kerelik saat en erken talep kuralına bakmaz ama vakti geçmişse açılmaz", async () => {
 	const db = sahteD1();
 	const bag = { db, now: SIMDI }; // 14:00
 	await panelIslemi(panelIstegi({ islem: "saat_ac", start: "2026-11-05T15:00" }), bag);
