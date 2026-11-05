@@ -367,12 +367,13 @@ sadece artık HTTP API üzerinden yazılıyor.
 Ziyaretçi uygun saati seçer, talep Telegram'a düğmeyle düşer; onaylayınca ders
 kesinleşir. Kendi planlarını `/takvim/panel`den doldurursun (parola `/stats` ile
 aynı). Saatler Türkiye saatiyle saklanır, ziyaretçiye kendi yerel saatiyle gösterilir;
-yurt dışındaki öğrencinin saati Telegram mesajına da yazılır. Herkes yalnız boş ve dolu saati görür; ad, telefon ve plan başlığı açık uca
-çıkmaz. Kişisel veri yalnız D1'dedir.
+yurt dışındaki öğrencinin saati Telegram mesajına da yazılır. Herkes bütün haftayı görür: açık işaretlenmeyen saat kapalıdır. Yalnız boş, dolu ve kapalı bilgisi çıkar; ad, telefon ve plan başlığı açık uca
+çıkmaz. Kişisel veri yalnız D1'dedir, kendiliğinden silinmez; panelde "Kaydı sil" kalıcı siler.
 
 | Kural | Değer | Nerede |
 |---|---|---|
 | Haftalık açık saatler | Panelden; varsayılan hafta içi 19–23, hafta sonu 10–23 | `VARSAYILAN_HAFTA` |
+| Bir kerelik saat | Panelde kapalı saate dokun, "Öğrenciye aç"; 3 saat kuralına bakmaz | `takvim_ek_saat` |
 | En erken talep | 3 saat sonrası | `EN_AZ_SAAT` |
 | Kaç gün ileri | 28 | `UFUK_GUN` |
 | Cevapsız talep saati ne zaman boşaltır | 24 saat | `BEKLEME_SAAT` |

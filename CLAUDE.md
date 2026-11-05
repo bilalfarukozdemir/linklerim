@@ -34,4 +34,5 @@ Bunlar bilinçli kararlar, eksiklik değil:
 - **Canlı sayaç verisini silme veya sıfırlama.** D1'deki tık geçmişi geri gelmez.
 - Depo herkese açık — commit geçmişine kişisel veri veya anahtar girmesin.
 - **`/takvim/musait` yalnız saat ve boş/dolu döner.** Öğrencinin adı, telefonu ve
-  plan başlığı herkese açık uca çıkmaz; `takvim_kayit` verisini silme.
+  plan başlığı herkese açık uca çıkmaz. `takvim_kayit` verisini ajan silmez; kalıcı
+  silme yalnız Bilal'in paneldeki "Kaydı sil" düğmesiyle olur.

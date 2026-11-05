@@ -59,6 +59,9 @@ main{ max-width:70rem; margin:0 auto; padding:1.25rem 1rem 3rem; }
 .saat{ font:inherit; font-size:.9375rem; font-variant-numeric:tabular-nums; min-height:44px; padding:0 .25rem; border-radius:7px; border:1px solid var(--free-border); background:var(--free-bg); color:var(--free-text); font-weight:500; cursor:pointer; }
 .saat:hover{ background:var(--navy); color:var(--cream); border-color:var(--navy); }
 .saat[disabled]{ background:var(--busy-bg); color:var(--busy-text); border-color:transparent; cursor:default; font-weight:400; text-decoration:line-through; }
+.saat.kapali,.saat.kapali:hover{ background:transparent; color:var(--muted); border:1px dashed var(--border); text-decoration:none; opacity:.7; }
+.lejant{ display:flex; flex-wrap:wrap; gap:.9rem; margin:0 0 1rem; color:var(--muted); font-size:.875rem; }
+.lejant i{ display:inline-block; width:.85rem; height:.85rem; border-radius:3px; margin-right:.35rem; vertical-align:-1px; }
 .bos{ color:var(--muted); font-size:.875rem; margin:0; }
 .acik{ color:var(--muted); font-size:.875rem; margin:1rem 0 0; }
 .durum{ padding:1.5rem 0; color:var(--muted); }
@@ -98,6 +101,11 @@ textarea{ resize:vertical; min-height:4.5rem; }
 		<strong id="aralik" aria-live="polite"></strong>
 		<button type="button" id="ileri" aria-label="Sonraki hafta">→</button>
 	</div>
+	<p class="lejant" id="lejant" hidden>
+		<span><i style="border:1px solid var(--free-border);background:var(--free-bg)"></i>Boş, seçilebilir</span>
+		<span><i style="background:var(--busy-bg)"></i>Dolu</span>
+		<span><i style="border:1px dashed var(--border);opacity:.7"></i>Kapalı</span>
+	</p>
 	<div class="izgara" id="izgara"></div>
 	<p class="durum" id="durum">Takvim yükleniyor…</p>
 	<p class="acik" id="acik" hidden></p>
@@ -182,6 +190,10 @@ textarea{ resize:vertical; min-height:4.5rem; }
 				if (s.durum === "dolu") {
 					d.disabled = true;
 					d.setAttribute("aria-label", s.saat + " dolu");
+				} else if (s.durum === "kapali") {
+					d.disabled = true;
+					d.classList.add("kapali");
+					d.setAttribute("aria-label", s.saat + " kapalı");
 				} else {
 					d.setAttribute("aria-label", g.ad + " " + g.tarih + " " + s.saat + " seç");
 					d.addEventListener("click", function () { ac(g, s); });
@@ -218,6 +230,7 @@ textarea{ resize:vertical; min-height:4.5rem; }
 			$("acik").textContent = "Saatler senin yerel saatinle gösteriliyor" + (dilim ? " (" + dilim + ")" : "") + ". Her blok 1 saat, en erken " + v.enAzSaat + " saat sonrası seçilebilir.";
 			$("acik").hidden = false;
 			$("gezgin").hidden = false;
+			$("lejant").hidden = false;
 			$("durum").hidden = true;
 			ciz();
 		});

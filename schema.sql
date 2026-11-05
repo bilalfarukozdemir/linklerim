@@ -49,6 +49,11 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_takvim_tek_saat
 
 CREATE INDEX IF NOT EXISTS idx_takvim_start ON takvim_kayit (start);
 
+-- Haftalık düzenin dışında, yalnız o tarih için öğrenciye açılan saatler.
+CREATE TABLE IF NOT EXISTS takvim_ek_saat (
+  start TEXT PRIMARY KEY
+);
+
 -- Haftalık müsaitlik gibi tek satırlık ayarlar (JSON).
 CREATE TABLE IF NOT EXISTS takvim_ayar (
   key   TEXT PRIMARY KEY,

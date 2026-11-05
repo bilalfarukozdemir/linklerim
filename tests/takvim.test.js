@@ -92,14 +92,23 @@ test("talep yalnız haftalık aralıkta, 3 saat sonrasından 28 gün içine alı
 	assert.equal(talebeAcikMi("2026-11-05T22:00", HAFTA, new Date("2026-11-05T16:00:00Z")), true);
 });
 
-test("kapalı gün hiç saat vermez, geçmiş saat listelenmez", () => {
+test("bütün hafta görünür: açık olmayan saat kapalıdır, geçmiş saat listelenmez", () => {
 	const hafta = { ...HAFTA, 5: null };
 	const gunler = musaitGunler({ hafta, doluSaatler: [], now: SIMDI });
 	assert.equal(gunler.length, 28);
-	assert.deepEqual(gunler.find((g) => g.gun === "2026-11-06").saatler, []);
+	const cuma = gunler.find((g) => g.gun === "2026-11-06").saatler;
+	assert.equal(cuma.length, 16, "08:00–23:00");
+	assert.ok(cuma.every((s) => s.durum === "kapali"));
+	const pazartesi = gunler.find((g) => g.gun === "2026-11-09").saatler;
+	assert.equal(pazartesi.find((s) => s.start.endsWith("11:00")).durum, "kapali");
+	assert.equal(pazartesi.find((s) => s.start.endsWith("19:00")).durum, "bos");
 	const aksam = new Date("2026-11-05T17:30:00Z"); // 20:30
 	const bugun = musaitGunler({ hafta: HAFTA, doluSaatler: ["2026-11-05T19:00", "2026-11-05T22:00"], now: aksam })[0];
-	assert.deepEqual(bugun.saatler, [{ start: "2026-11-05T22:00", durum: "dolu" }]);
+	assert.deepEqual(bugun.saatler, [
+		{ start: "2026-11-05T21:00", durum: "kapali" },
+		{ start: "2026-11-05T22:00", durum: "dolu" },
+		{ start: "2026-11-05T23:00", durum: "kapali" },
+	]);
 });
 
 test("telefon biçimleri sadeleşir, bozuk numara reddedilir", () => {
@@ -362,4 +371,86 @@ test("tarayıcı: saatler ziyaretçinin dilimine ve gününe taşınır", () => 
 	const newYork = gruplaDilimde("America/New_York", gunler, simdi);
 	assert.deepEqual(newYork[0].saatler.map((s) => s.saat), ["11:00", "14:00"]);
 	assert.deepEqual(newYork[1].saatler.map((s) => s.saat), ["02:00"]);
+});
+
+test("kaydı sil kişisel veriyi kalıcı siler ve saati boşaltır, planı silmez", async () => {
+	const db = sahteD1();
+	const bag = { db, now: SIMDI };
+	await talepOlustur(talepIstegi(), { db, telegram: null, now: SIMDI });
+	await panelIslemi(panelIstegi({ islem: "plan_ekle", start: "2026-11-06T21:00" }), bag);
+
+	assert.equal((await panelIslemi(panelIstegi({ islem: "sil", id: 2 }), bag)).status, 404, "plan silinmez");
+	assert.equal((await panelIslemi(panelIstegi({ islem: "sil", id: 1 }), bag)).status, 200);
+	assert.equal(kayit(db), undefined);
+	assert.equal((await panelIslemi(panelIstegi({ islem: "sil", id: 1 }), bag)).status, 404);
+	assert.equal((await talepOlustur(talepIstegi({ phone: "05329998877" }), { db, telegram: null, now: SIMDI })).status, 201);
+});
+
+test("geçmiş talepler panelde kalır, kendiliğinden silinmez, herkese açık uçta yoktur", async () => {
+	const db = sahteD1();
+	await talepOlustur(talepIstegi(), { db, telegram: null, now: SIMDI });
+	await talepOlustur(talepIstegi({ start: "2026-11-07T10:00", phone: "05329998877", name: "Reddedilen" }), { db, telegram: null, now: SIMDI });
+	await panelIslemi(panelIstegi({ islem: "onayla", id: 1 }), { db, now: SIMDI });
+	await panelIslemi(panelIstegi({ islem: "reddet", id: 2 }), { db, now: SIMDI });
+
+	const simdi = await (await panelVerisi({ db, now: SIMDI })).json();
+	assert.deepEqual(simdi.gecmis.map((k) => k.name), ["Reddedilen"]);
+
+	const sonra = new Date(SIMDI.getTime() + 400 * 24 * 60 * 60 * 1000);
+	const yil = await (await panelVerisi({ db, now: sonra })).json();
+	assert.deepEqual(yil.gecmis.map((k) => k.name).sort(), ["Ayşe Yılmaz", "Reddedilen"]);
+	assert.equal(yil.gecmis.find((k) => k.name === "Ayşe Yılmaz").phone, "905321112233");
+
+	const acik = await (await musaitYaniti({ db, now: SIMDI })).text();
+	assert.ok(!acik.includes("Reddedilen"));
+});
+
+test("kapalı saat bir kerelik açılır, yalnız o tarihte geçerlidir, geri alınır", async () => {
+	const db = sahteD1();
+	const bag = { db, now: SIMDI };
+	const pzt = "2026-11-09T11:00"; // pazartesi gündüz, haftalık düzende kapalı
+	const sonrakiPzt = "2026-11-16T11:00";
+	assert.equal((await talepOlustur(talepIstegi({ start: pzt }), { db, telegram: null, now: SIMDI })).status, 400);
+
+	assert.equal((await panelIslemi(panelIstegi({ islem: "saat_ac", start: pzt, saatSayisi: 2 }), bag)).status, 200);
+	const metin = await (await musaitYaniti(bag)).text();
+	assert.ok(metin.includes('"start":"2026-11-09T11:00","durum":"bos"'));
+	assert.ok(metin.includes('"start":"2026-11-09T12:00","durum":"bos"'));
+	assert.ok(metin.includes(`"start":"${sonrakiPzt}","durum":"kapali"`), "haftalık düzen değişmez");
+
+	assert.equal((await talepOlustur(talepIstegi({ start: pzt }), { db, telegram: null, now: SIMDI })).status, 201);
+	const dolu = await (await musaitYaniti(bag)).text();
+	assert.ok(dolu.includes('"start":"2026-11-09T11:00","durum":"dolu"'));
+
+	await panelIslemi(panelIstegi({ islem: "saat_kapat", start: "2026-11-09T12:00" }), bag);
+	assert.ok((await (await musaitYaniti(bag)).text()).includes('"start":"2026-11-09T12:00","durum":"kapali"'));
+	assert.equal((await talepOlustur(talepIstegi({ start: "2026-11-09T12:00", phone: "05329998877" }), { db, telegram: null, now: SIMDI })).status, 400);
+});
+
+test("bir kerelik saat 3 saat kuralına bakmaz ama vakti geçmişse açılmaz", async () => {
+	const db = sahteD1();
+	const bag = { db, now: SIMDI }; // 14:00
+	await panelIslemi(panelIstegi({ islem: "saat_ac", start: "2026-11-05T15:00" }), bag);
+	await panelIslemi(panelIstegi({ islem: "saat_ac", start: "2026-11-05T12:00" }), bag);
+	const metin = await (await musaitYaniti(bag)).text();
+	assert.ok(metin.includes('"start":"2026-11-05T15:00","durum":"bos"'));
+	assert.ok(!metin.includes("2026-11-05T12:00"));
+	assert.equal((await talepOlustur(talepIstegi({ start: "2026-11-05T15:00" }), { db, telegram: null, now: SIMDI })).status, 201);
+	assert.equal((await talepOlustur(talepIstegi({ start: "2026-11-05T12:00", phone: "05329998877" }), { db, telegram: null, now: SIMDI })).status, 400);
+});
+
+test("bir kerelik açmada süre sınırları", async () => {
+	const bag = { db: sahteD1(), now: SIMDI };
+	assert.equal((await panelIslemi(panelIstegi({ islem: "saat_ac", start: "2026-11-09T23:00", saatSayisi: 2 }), bag)).status, 400);
+	assert.equal((await panelIslemi(panelIstegi({ islem: "saat_ac", start: "bozuk" }), bag)).status, 400);
+});
+
+test("kapalı saate girilen plan herkese kapalı görünür, açık saatte dolu", async () => {
+	const db = sahteD1();
+	const bag = { db, now: SIMDI };
+	await panelIslemi(panelIstegi({ islem: "plan_ekle", start: "2026-11-09T11:00" }), bag);
+	await panelIslemi(panelIstegi({ islem: "plan_ekle", start: "2026-11-09T19:00" }), bag);
+	const metin = await (await musaitYaniti(bag)).text();
+	assert.ok(metin.includes('"start":"2026-11-09T11:00","durum":"kapali"'));
+	assert.ok(metin.includes('"start":"2026-11-09T19:00","durum":"dolu"'));
 });
