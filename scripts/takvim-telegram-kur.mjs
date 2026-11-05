@@ -4,7 +4,7 @@
  *
  *   node scripts/takvim-telegram-kur.mjs
  *
- * Önce @BotFather ile bot aç ve botuna /start yaz.
+ * Önce @BotFather ile bot aç. Betik botuna /start yazmanı bekler.
  */
 
 import { spawnSync } from "node:child_process";
@@ -50,12 +50,17 @@ const ben = await bot("getMe");
 console.log(`Bot: @${ben.username}`);
 
 await bot("deleteWebhook");
-const guncellemeler = await bot("getUpdates", { timeout: 1 });
-const sohbet = guncellemeler
-	.map((g) => g.message?.chat)
-	.filter((c) => c?.type === "private")
-	.at(-1);
-if (!sohbet) hataylaCik(`Önce Telegram'da @${ben.username} botuna /start yaz, sonra yeniden çalıştır.`);
+// Mesaj hemen düşmeyebilir: 2 dakika bekler, bu sırada /start yazılabilir.
+console.log(`Telegram'da @${ben.username} botuna /start yaz, bekliyorum...`);
+let sohbet;
+for (let tur = 0; tur < 6 && !sohbet; tur++) {
+	const guncellemeler = await bot("getUpdates", { timeout: 20 });
+	sohbet = guncellemeler
+		.map((g) => g.message?.chat)
+		.filter((c) => c?.type === "private")
+		.at(-1);
+}
+if (!sohbet) hataylaCik(`@${ben.username} botundan mesaj gelmedi. /start yazıp yeniden çalıştır.`);
 
 const sir = randomBytes(32).toString("hex");
 await bot("setWebhook", { url: ADRES, secret_token: sir, allowed_updates: ["callback_query"] });
