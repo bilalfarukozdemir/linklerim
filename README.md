@@ -268,6 +268,9 @@ Sayfadaki her şey `public/links.json`'dan gelir. Telefondan:
 Linklerin **sırası** dosyadaki sıradır. Geçersiz kayıtlar (eksik alan,
 `javascript:` gibi şema) sessizce atlanır — sayfa bozulmaz.
 
+> **Yapılacak:** `raf-tavla`: Play üretim yayını gelince url
+> `https://play.google.com/store/apps/details?id=com.vitrincim.tavla` yapılacak.
+
 > **Slug'ı değiştirirsen** sayacı sıfırlanır; eski slug `/stats` içinde
 > "arşiv" olarak görünmeye devam eder.
 

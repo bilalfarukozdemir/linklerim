@@ -161,6 +161,19 @@
         "h": 6.2,
         "preview": "/onizleme/kelime-avi.jpg"
       }
+    },
+    {
+      "slug": "raf-tavla",
+      "title": "Tavla 3D",
+      "url": "https://tavla.vitrincim.com",
+      "emoji": "🎲",
+      "spot": {
+        "x": 10.8,
+        "y": 66.9,
+        "w": 6.4,
+        "h": 6.9,
+        "preview": "/onizleme/tavla-3d.jpg"
+      }
     }
   ]
 }
