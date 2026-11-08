@@ -236,6 +236,8 @@ main{
 	object-fit: contain;
 }
 
+.link .icon.tam{ padding: 0; object-fit: cover; }
+
 .link .text{ min-width: 0; }
 .link .title{
 	display: block;
@@ -465,7 +467,8 @@ footer a:focus-visible{
 			link.icon.charAt(0) === "/" && link.icon.charAt(1) !== "/";
 		if (!yerelIkon) return emoji;
 
-		var img = el("img", "icon");
+		// iconFull: ikon kendi zeminiyle gelir (oyun karesi gibi), tuğla boşluğu istemez
+		var img = el("img", link.iconFull ? "icon tam" : "icon");
 		img.src = link.icon;
 		img.alt = ""; // dekoratif: başlık zaten yanında yazıyor
 		img.width = 44;

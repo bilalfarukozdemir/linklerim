@@ -11,6 +11,15 @@
   },
   "links": [
     {
+      "slug": "veyra-aksiyon",
+      "title": "Gün 1'deki oyunu oyna",
+      "desc": "Veyra · tarayıcıda, telefonda da açılır",
+      "url": "https://veyra-aksiyon.vercel.app",
+      "icon": "/icons/veyra-korel.png",
+      "emoji": "⚔️",
+      "iconFull": true
+    },
+    {
       "slug": "vitrincim",
       "title": "Vitrincim",
       "desc": "web sitesi, uygulama, özel program",
