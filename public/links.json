@@ -54,12 +54,28 @@
       "emoji": ""
     },
     {
+      "slug": "youtube",
+      "title": "YouTube",
+      "desc": "@bilaldevlog · devlog videoları",
+      "url": "https://www.youtube.com/@bilaldevlog",
+      "icon": "/icons/youtube.svg",
+      "emoji": "▶️"
+    },
+    {
       "slug": "instagram",
       "title": "Instagram",
-      "desc": "@bilalfarukozdemir",
-      "url": "https://instagram.com/bilalfarukozdemir",
+      "desc": "@bilaldevlog",
+      "url": "https://instagram.com/bilaldevlog",
       "icon": "/icons/instagram.svg",
       "emoji": "📸"
+    },
+    {
+      "slug": "tiktok",
+      "title": "TikTok",
+      "desc": "@bilaldevlog",
+      "url": "https://tiktok.com/@bilaldevlog",
+      "icon": "/icons/tiktok.svg",
+      "emoji": "🎵"
     },
     {
       "slug": "github",
@@ -84,14 +100,6 @@
       "url": "https://linkedin.com/in/bilalfarukozdemir",
       "icon": "/icons/linkedin.svg",
       "emoji": "💼"
-    },
-    {
-      "slug": "tiktok",
-      "title": "TikTok",
-      "desc": "@bilalfarukozdemir",
-      "url": "https://tiktok.com/@bilalfarukozdemir",
-      "icon": "/icons/tiktok.svg",
-      "emoji": "🎵"
     },
     {
       "slug": "raf-kingdom",
