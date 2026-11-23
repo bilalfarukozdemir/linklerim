@@ -191,6 +191,62 @@
         "h": 6.9,
         "preview": "/onizleme/tavla-3d.jpg"
       }
+    },
+    {
+      "slug": "bio-tumblr",
+      "title": "Bio: Tumblr",
+      "url": "https://link.vitrincim.com/",
+      "emoji": "↩️",
+      "hidden": true
+    },
+    {
+      "slug": "bio-instagram",
+      "title": "Bio: Instagram",
+      "url": "https://link.vitrincim.com/",
+      "emoji": "↩️",
+      "hidden": true
+    },
+    {
+      "slug": "bio-tiktok",
+      "title": "Bio: TikTok",
+      "url": "https://link.vitrincim.com/",
+      "emoji": "↩️",
+      "hidden": true
+    },
+    {
+      "slug": "bio-youtube",
+      "title": "Bio: YouTube",
+      "url": "https://link.vitrincim.com/",
+      "emoji": "↩️",
+      "hidden": true
+    },
+    {
+      "slug": "bio-x",
+      "title": "Bio: X",
+      "url": "https://link.vitrincim.com/",
+      "emoji": "↩️",
+      "hidden": true
+    },
+    {
+      "slug": "bio-threads",
+      "title": "Bio: Threads",
+      "url": "https://link.vitrincim.com/",
+      "emoji": "↩️",
+      "hidden": true
+    },
+    {
+      "slug": "bio-github",
+      "title": "Bio: GitHub",
+      "url": "https://link.vitrincim.com/",
+      "emoji": "↩️",
+      "hidden": true
+    },
+    {
+      "slug": "bio-linkedin",
+      "title": "Bio: LinkedIn",
+      "url": "https://link.vitrincim.com/",
+      "emoji": "↩️",
+      "hidden": true
     }
   ]
 }

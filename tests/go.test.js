@@ -16,6 +16,7 @@ const LINKS = {
 		{ slug: "mail", title: "E-posta", url: "mailto:test@ornek.com" },
 		{ slug: "kotu", title: "Kötü link", url: "javascript:alert(1)" },
 		{ slug: "kapali", title: "Kapalı", url: "https://ornek.com", active: false },
+		{ slug: "bio-tumblr", title: "Bio: Tumblr", url: "https://link.ornek.com/", hidden: true },
 	],
 };
 
@@ -192,4 +193,17 @@ test("sahibin tıkı sayılmaz ama yönlendirme yine çalışır", async () => {
 	});
 	assert.equal(res.status, 302);
 	assert.equal(db.batches.length, 0);
+});
+
+test("hidden link sayfada görünmese de yönlendirir ve sayılır", async () => {
+	const db = fakeDb();
+	const response = await handleGo({
+		request: new Request(`${BASE}/go/bio-tumblr`, { headers: { "user-agent": IPHONE } }),
+		db,
+		slug: "bio-tumblr",
+		baseUrl: BASE,
+	});
+	assert.equal(response.status, 302);
+	assert.equal(response.headers.get("location"), "https://link.ornek.com/");
+	assert.equal(db.batches.length, 1);
 });

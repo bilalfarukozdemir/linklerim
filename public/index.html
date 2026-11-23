@@ -600,7 +600,7 @@ footer a:focus-visible{
 
 		var list = el("ul", "links");
 		links
-			.filter(function (link) { return link && link.slug && link.title && link.url && link.active !== false && !link.spot; })
+			.filter(function (link) { return link && link.slug && link.title && link.url && link.active !== false && !link.spot && !link.hidden; })
 			.forEach(function (link) { list.appendChild(buildLink(link)); });
 
 		var footer = buildFooter(profile, data && data.credit);
