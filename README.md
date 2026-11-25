@@ -264,6 +264,7 @@ Sayfadaki her şey `public/links.json`'dan gelir. Telefondan:
 | `links[].featured` | – | `true` → sayfanın tek dolu kartı |
 | `links[].spot` | – | Linki kart yerine sahnedeki bir nesneye bağlar: `{x, y, w, h, preview}`. Konum ve boyut masaüstü sahnesinin yüzdesi, `preview` `public/` içindeki fotoğraf. Yalnız masaüstü sahnesinde ve fareyle görünür; tıklar yine `/go/<slug>` ile sayılır |
 | `links[].active` | – | `false` → sayfada görünmez, `/go/<slug>` 404 verir; tık geçmişi `/stats`'ta arşiv olarak kalır |
+| `links[].en` | – | İngilizce çeviri: `{ "title": "…", "desc": "…" }`. Tarayıcı dili Türkçe olmayana sayfa İngilizce açılır; sağ üstteki EN/TR tuşuyla değişir, seçim cihazda (`localStorage`) hatırlanır. Çevirisi olmayan alan Türkçesiyle görünür |
 | `links[].hidden` | – | `true` → sayfada görünmez ama `/go/<slug>` çalışır ve tık sayılır. Sosyal medya bio linklerinin hangi platformdan geldiğini ayırmak için (`bio-instagram` gibi, hedef sayfanın kendisi) |
 
 Linklerin **sırası** dosyadaki sıradır. Geçersiz kayıtlar (eksik alan,

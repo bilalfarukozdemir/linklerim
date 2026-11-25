@@ -129,7 +129,8 @@ main{
 	min-height: 100vh;
 	min-height: 100svh;
 	margin: 0 auto;
-	padding-top: 1.5rem;
+	/* Sağ üstteki dil tuşu tabelaya binmesin */
+	padding-top: 2.875rem;
 }
 
 /* ── Tabela ve fotoğraf ─────────────────────────────────────────────── */
@@ -341,6 +342,37 @@ footer a:focus-visible{
 	border-radius: 3px;
 }
 
+/* ── Dil tuşu ────────────────────────────────────────────────────────────
+   Sağ üst köşede küçük hap: seçili dil dolu, diğeri soluk. */
+.lang{
+	position: fixed;
+	top: max(.625rem, env(safe-area-inset-top));
+	right: max(.625rem, env(safe-area-inset-right));
+	z-index: 30;
+	display: flex;
+	padding: 2px;
+	border-radius: 999px;
+	background: rgba(17, 23, 32, .72);
+	box-shadow: inset 0 0 0 1px rgba(217, 180, 95, .45);
+}
+.lang button{
+	min-width: 2.125rem;
+	padding: .25rem .5rem;
+	border: 0;
+	border-radius: 999px;
+	background: none;
+	color: var(--cream);
+	font: 600 .6875rem/1 "DM Sans", system-ui, sans-serif;
+	letter-spacing: .06em;
+	cursor: pointer;
+	opacity: .7;
+	-webkit-tap-highlight-color: transparent;
+	transition: background-color .18s ease, color .18s ease, opacity .18s ease;
+}
+.lang button[aria-pressed="true"]{ background: var(--gold); color: #111720; opacity: 1; }
+@media (hover: hover){ .lang button:hover{ opacity: 1; } }
+.lang button:focus-visible{ outline: 2px solid var(--gold); outline-offset: 1px; }
+
 /* ── Geniş ekran ────────────────────────────────────────────────────────
    Masaüstü sahnesi: nesneler iki yandaki raflarda, orta sütun boş. Daha dar
    ekranda yan raflar kırpılacağı için orada dikey sahne kullanılır. */
@@ -424,6 +456,74 @@ footer a:focus-visible{
 
 	var app = document.getElementById("app");
 
+	// ── Dil ──────────────────────────────────────────────────────────────
+	// Tarayıcı dillerinden biri Türkçe ise Türkçe, değilse İngilizce açılır.
+	// Tuşla seçilen dil bu cihazda hatırlanır. Çeviriler links.json'da
+	// her kaydın "en" alanında; çevirisi olmayan alan Türkçesiyle kalır.
+	var DIL_ANAHTARI = "linklerim_dil";
+	var METIN = {
+		tr: { photo: " profil fotoğrafı", photoNone: "Profil fotoğrafı", madeBy: " tarafından yapıldı",
+		      empty: "Henüz link eklenmedi.", failed: "Linkler yüklenemedi. Sayfayı yenilemeyi dene.",
+		      title: " — Linkler", switchTo: "Dil seçimi" },
+		en: { photo: " profile photo", photoNone: "Profile photo", madeBy: "", madeByPre: "Made by ",
+		      empty: "No links yet.", failed: "Couldn't load the links. Try refreshing the page.",
+		      title: " — Links", switchTo: "Language" }
+	};
+
+	function kayitliDil() {
+		try { var v = localStorage.getItem(DIL_ANAHTARI); return v === "tr" || v === "en" ? v : null; }
+		catch (e) { return null; }
+	}
+
+	function tarayiciDili() {
+		var list = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || ""];
+		for (var i = 0; i < list.length; i++) {
+			if (/^tr\b/i.test(String(list[i]))) return "tr";
+		}
+		return "en";
+	}
+
+	var dil = kayitliDil() || tarayiciDili();
+	var veri = null, yuklenemedi = false;
+	document.documentElement.lang = dil;
+
+	function t(key) { return METIN[dil][key] || ""; }
+
+	// Kaydın seçili dildeki hali: "en" alanındaki çeviri Türkçenin üstüne biner.
+	function cevir(obj) {
+		if (dil === "tr" || !obj || !obj.en || typeof obj.en !== "object") return obj;
+		var out = {};
+		for (var k in obj) out[k] = obj[k];
+		["title", "desc", "bio", "name"].forEach(function (k) {
+			if (typeof obj.en[k] === "string") out[k] = obj.en[k];
+		});
+		return out;
+	}
+
+	function buildLangSwitch() {
+		var box = el("div", "lang");
+		box.setAttribute("role", "group");
+		box.setAttribute("aria-label", t("switchTo"));
+		[["en", "EN", "English"], ["tr", "TR", "Türkçe"]].forEach(function (d) {
+			var b = el("button", null, d[1]);
+			b.type = "button";
+			b.lang = d[0];
+			b.setAttribute("aria-label", d[2]);
+			b.setAttribute("aria-pressed", String(d[0] === dil));
+			b.addEventListener("click", function () {
+				if (dil === d[0]) return;
+				dil = d[0];
+				document.documentElement.lang = dil;
+				try { localStorage.setItem(DIL_ANAHTARI, dil); } catch (e) {}
+				if (veri) return render(veri);
+				box.replaceWith(langSwitch = buildLangSwitch());
+				if (yuklenemedi) fail();
+			});
+			box.appendChild(b);
+		});
+		return box;
+	}
+
 	function el(tag, className, text) {
 		var node = document.createElement(tag);
 		if (className) node.className = className;
@@ -443,7 +543,7 @@ footer a:focus-visible{
 		if (profile.avatar) {
 			var img = el("img");
 			img.src = profile.avatar;
-			img.alt = profile.name ? profile.name + " profil fotoğrafı" : "Profil fotoğrafı";
+			img.alt = profile.name ? profile.name + t("photo") : t("photoNone");
 			img.width = 176;
 			img.height = 176;
 			img.decoding = "async";
@@ -508,7 +608,9 @@ footer a:focus-visible{
 			var line = el("p");
 			var anchor = el("a", null, credit.label);
 			anchor.href = credit.url;
-			line.append(anchor, document.createTextNode(" tarafından yapıldı"));
+			if (t("madeByPre")) line.appendChild(document.createTextNode(t("madeByPre")));
+			line.appendChild(anchor);
+			if (t("madeBy")) line.appendChild(document.createTextNode(t("madeBy")));
 			footer.appendChild(line);
 		}
 		return footer;
@@ -520,7 +622,8 @@ footer a:focus-visible{
 	function buildSpots(links) {
 		var items = links.filter(function (link) {
 			return link && link.slug && link.title && link.url && link.active !== false && link.spot;
-		});
+		}).map(cevir);
+		if (buildSpots.temizle) buildSpots.temizle();
 		if (!items.length) return;
 
 		var box = el("div", "spots");
@@ -578,13 +681,19 @@ footer a:focus-visible{
 		place();
 		window.addEventListener("resize", place);
 		document.body.append(box, preview);
+		buildSpots.temizle = function () {
+			window.removeEventListener("resize", place);
+			box.remove();
+			preview.remove();
+		};
 	}
 
 	function render(data) {
-		var profile = (data && data.profile) || {};
+		veri = data;
+		var profile = cevir((data && data.profile) || {});
 		var links = Array.isArray(data && data.links) ? data.links : [];
 
-		if (profile.name) document.title = profile.name + " — Linkler";
+		if (profile.name) document.title = profile.name + t("title");
 		if (/^#(?:[0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i.test(profile.accent || "")) {
 			document.documentElement.style.setProperty("--accent", profile.accent);
 		}
@@ -601,19 +710,24 @@ footer a:focus-visible{
 		var list = el("ul", "links");
 		links
 			.filter(function (link) { return link && link.slug && link.title && link.url && link.active !== false && !link.spot && !link.hidden; })
-			.forEach(function (link) { list.appendChild(buildLink(link)); });
+			.forEach(function (link) { list.appendChild(buildLink(cevir(link))); });
 
 		var footer = buildFooter(profile, data && data.credit);
 
-		app.replaceChildren(header, list.children.length ? list : el("p", "message", "Henüz link eklenmedi."), footer);
+		app.replaceChildren(header, list.children.length ? list : el("p", "message", t("empty")), footer);
 		app.setAttribute("aria-busy", "false");
+		langSwitch.replaceWith(langSwitch = buildLangSwitch());
 		buildSpots(links);
 	}
 
 	function fail() {
-		app.replaceChildren(el("p", "message", "Linkler yüklenemedi. Sayfayı yenilemeyi dene."));
+		yuklenemedi = true;
+		app.replaceChildren(el("p", "message", t("failed")));
 		app.setAttribute("aria-busy", "false");
 	}
+
+	var langSwitch = buildLangSwitch();
+	document.body.appendChild(langSwitch);
 
 	fetch("links.json", { cache: "no-cache" })
 		.then(function (response) {

@@ -17,7 +17,11 @@
       "url": "https://veyra-aksiyon.vercel.app",
       "icon": "/icons/veyra-korel.png",
       "emoji": "⚔️",
-      "iconFull": true
+      "iconFull": true,
+      "en": {
+        "title": "Play the Day 1 game",
+        "desc": "Veyra · runs in your browser, phones too"
+      }
     },
     {
       "slug": "vitrincim",
@@ -26,7 +30,10 @@
       "url": "https://vitrincim.com",
       "icon": "/icons/vitrincim.svg",
       "emoji": "🏪",
-      "featured": true
+      "featured": true,
+      "en": {
+        "desc": "websites, apps, custom software"
+      }
     },
     {
       "slug": "kalicihediye",
@@ -43,7 +50,11 @@
       "desc": "birebir yapay zekâ dersi · saat seç",
       "url": "https://link.vitrincim.com/takvim",
       "icon": "/icons/takvim.svg",
-      "emoji": "🗓️"
+      "emoji": "🗓️",
+      "en": {
+        "title": "Lesson Calendar",
+        "desc": "1-on-1 AI lessons in Turkish · pick a time"
+      }
     },
     {
       "slug": "ironcore-apps",
@@ -51,7 +62,11 @@
       "desc": "oyunlar ve araçlar · Google Play",
       "url": "https://play.google.com/store/apps/dev?id=8567376206083240739",
       "icon": "/icons/play.svg",
-      "emoji": ""
+      "emoji": "",
+      "en": {
+        "title": "My Android Apps",
+        "desc": "games and tools · Google Play"
+      }
     },
     {
       "slug": "youtube",
@@ -59,7 +74,10 @@
       "desc": "@bilaldevlog · devlog videoları",
       "url": "https://www.youtube.com/@bilaldevlog",
       "icon": "/icons/youtube.svg",
-      "emoji": "▶️"
+      "emoji": "▶️",
+      "en": {
+        "desc": "@bilaldevlog · devlog videos"
+      }
     },
     {
       "slug": "instagram",
@@ -83,7 +101,10 @@
       "desc": "açık kaynak projelerim",
       "url": "https://github.com/bilalfarukozdemir",
       "icon": "/icons/github.svg",
-      "emoji": "💻"
+      "emoji": "💻",
+      "en": {
+        "desc": "my open-source projects"
+      }
     },
     {
       "slug": "sponsor",
@@ -91,7 +112,10 @@
       "desc": "GitHub Sponsors",
       "url": "https://github.com/sponsors/bilalfarukozdemir",
       "icon": "/icons/destek.svg",
-      "emoji": "💖"
+      "emoji": "💖",
+      "en": {
+        "title": "Support My Projects"
+      }
     },
     {
       "slug": "linkedin",
@@ -99,7 +123,10 @@
       "desc": "iş geçmişim",
       "url": "https://linkedin.com/in/bilalfarukozdemir",
       "icon": "/icons/linkedin.svg",
-      "emoji": "💼"
+      "emoji": "💼",
+      "en": {
+        "desc": "my work experience"
+      }
     },
     {
       "slug": "raf-kingdom",
@@ -138,6 +165,9 @@
         "w": 8.6,
         "h": 12.6,
         "preview": "/onizleme/arabaci-tas.jpg"
+      },
+      "en": {
+        "title": "Arabacı Taş website"
       }
     },
     {
@@ -151,6 +181,9 @@
         "w": 7.1,
         "h": 11.4,
         "preview": "/onizleme/kasa.jpg"
+      },
+      "en": {
+        "title": "Grocery checkout app"
       }
     },
     {
