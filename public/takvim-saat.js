@@ -4,14 +4,22 @@
  * Bir saat, ziyaretçide başka güne düşebilir: bu yüzden günler burada yeniden kurulur.
  */
 (function (kok) {
-	var AYLAR = ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
-	var GUNLER = ["Pazar","Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi"];
+	var ADLAR = {
+		tr: {
+			aylar: ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"],
+			gunler: ["Pazar","Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi"]
+		},
+		en: {
+			aylar: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+			gunler: ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
+		}
+	};
 
 	function iki(n) { return String(n).padStart(2, "0"); }
 	function an(start) { return new Date(start + ":00+03:00"); }
 	function gunAnahtari(d) { return d.getFullYear() + "-" + iki(d.getMonth() + 1) + "-" + iki(d.getDate()); }
 	function saatYaz(d) { return iki(d.getHours()) + ":" + iki(d.getMinutes()); }
-	function tarihYaz(d) { return d.getDate() + " " + AYLAR[d.getMonth()]; }
+	function tarihYaz(d, ad) { return ad === ADLAR.en ? ad.aylar[d.getMonth()] + " " + d.getDate() : d.getDate() + " " + ad.aylar[d.getMonth()]; }
 
 	function saatBilgisi(s) {
 		var d = an(s.start);
@@ -26,8 +34,9 @@
 		};
 	}
 
-	/** @returns gün gün, boş günler dahil kesintisiz liste; ilk gün ziyaretçinin bugünü. */
-	function grupla(gunler, simdi) {
+	/** @returns gün gün, boş günler dahil kesintisiz liste; ilk gün ziyaretçinin bugünü. dil: "tr" (varsayılan) ya da "en". */
+	function grupla(gunler, simdi, dil) {
+		var ad = ADLAR[dil] || ADLAR.tr;
 		var kovalar = {};
 		var son = null;
 		gunler.forEach(function (g) {
@@ -47,8 +56,8 @@
 			var a = gunAnahtari(imlec);
 			sonuc.push({
 				gun: a,
-				ad: GUNLER[imlec.getDay()],
-				tarih: tarihYaz(imlec),
+				ad: ad.gunler[imlec.getDay()],
+				tarih: tarihYaz(imlec, ad),
 				saatler: (kovalar[a] || [])
 					.sort(function (x, y) { return x.d - y.d; })
 					.map(function (k) { return saatBilgisi(k.s); })

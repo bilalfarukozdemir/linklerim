@@ -105,44 +105,56 @@ textarea{ resize:vertical; min-height:4.5rem; }
 .dugmeler button:disabled{ opacity:.6; cursor:wait; }
 .formhata{ color:var(--err); font-size:.9375rem; margin:.5rem 0 0; min-height:1.4em; }
 .tamam{ color:var(--ok); font-weight:600; }
+.ust{ display:flex; align-items:center; justify-content:space-between; gap:.75rem; }
+.lang{ display:flex; flex:none; padding:2px; border-radius:999px; background:rgba(0,0,0,.25); box-shadow:inset 0 0 0 1px rgba(217,180,95,.45); }
+.lang button{ min-width:2.125rem; min-height:0; padding:.25rem .5rem; border:0; border-radius:999px; background:none; color:var(--cream); font:600 .6875rem/1 "DM Sans",system-ui,sans-serif; letter-spacing:.06em; cursor:pointer; opacity:.7; }
+.lang button[aria-pressed="true"]{ background:var(--gold); color:#111720; opacity:1; }
+@media (hover:hover){ .lang button:hover{ opacity:1; } }
+.lang button:focus-visible{ outline:2px solid var(--gold); outline-offset:1px; }
 </style>
 </head>
 <body>
 <header class="bas"><div>
-	<a href="/">← Bilal Faruk Özdemir</a>
-	<h1>Ders Takvimi</h1>
-	<p>Birebir ve online yapay zekâ dersi. Uygun bir saat seç, talebini gönder; onaylayınca sana WhatsApp'tan yazarım.</p>
+	<div class="ust">
+		<a href="/">← Bilal Faruk Özdemir</a>
+		<div class="lang" id="dilTusu" role="group" aria-label="Dil seçimi">
+			<button type="button" lang="en" data-dil="en" aria-label="English">EN</button>
+			<button type="button" lang="tr" data-dil="tr" aria-label="Türkçe">TR</button>
+		</div>
+	</div>
+	<h1 data-m="baslik">Ders Takvimi</h1>
+	<p data-m="giris">Birebir ve online yapay zekâ dersi. Uygun bir saat seç, talebini gönder; onaylayınca sana WhatsApp'tan yazarım.</p>
 	<p class="lejant" id="lejant" hidden>
-		<span><i style="border:1px solid var(--gold)"></i>Boş, seçilebilir</span>
-		<span><i style="background:#6d7078"></i>Dolu</span>
-		<span><i style="border:1px dashed #8b93a0"></i>Kapalı</span>
+		<span><i style="border:1px solid var(--gold)"></i><span data-m="bos">Boş, seçilebilir</span></span>
+		<span><i style="background:#6d7078"></i><span data-m="dolu">Dolu</span></span>
+		<span><i style="border:1px dashed #8b93a0"></i><span data-m="kapali">Kapalı</span></span>
 	</p>
 	<p class="acik" id="acik" hidden></p>
 </div></header>
 <main>
 	<div class="gezgin" id="gezgin" hidden>
-		<button type="button" id="geri" aria-label="Önceki hafta">←</button>
+		<button type="button" id="geri" data-m-aria="onceki" aria-label="Önceki hafta">←</button>
 		<strong id="aralik" aria-live="polite"></strong>
-		<button type="button" id="ileri" aria-label="Sonraki hafta">→</button>
+		<button type="button" id="ileri" data-m-aria="sonraki" aria-label="Sonraki hafta">→</button>
 	</div>
 	<div class="izgara" id="izgara"></div>
-	<p class="durum" id="durum">Takvim yükleniyor…</p>
+	<p class="durum" id="durum" data-m="yukleniyor">Takvim yükleniyor…</p>
 </main>
 
 <dialog id="pencere" aria-labelledby="pencereBaslik">
 	<div id="formAlan">
-		<h2 id="pencereBaslik">Ders talebi</h2>
+		<h2 id="pencereBaslik" data-m="talepBaslik">Ders talebi</h2>
 		<p class="secilen" id="secilen"></p>
 		<p class="turkiye" id="turkiye" hidden></p>
 		<form id="form" novalidate>
-			<label>Adın soyadın
+			<label><span data-m="ad">Adın soyadın</span>
 				<input type="text" name="name" autocomplete="name" maxlength="80" required>
 			</label>
-			<label>Telefon (WhatsApp)
-				<small>18 yaşından küçüksen velinin numarasını yaz.</small>
-				<input type="tel" name="phone" autocomplete="tel" inputmode="tel" placeholder="05xx xxx xx xx" required>
+			<label><span data-m="telefon">Telefon (WhatsApp)</span>
+				<small data-m="veli">18 yaşından küçüksen velinin numarasını yaz.</small>
+				<input type="tel" name="phone" autocomplete="tel" inputmode="tel" data-m-ph="telefonOrnek" placeholder="05xx xxx xx xx" required>
 			</label>
-			<label>Not <small>İsteğe bağlı: seviyen, ne öğrenmek istediğin.</small>
+			<label><span data-m="not">Not</span> <small data-m="notAciklama">İsteğe bağlı: seviyen, ne öğrenmek istediğin.</small>
 				<textarea name="note" maxlength="300"></textarea>
 			</label>
 			<label class="tuzak" aria-hidden="true">Web siteniz
@@ -150,20 +162,20 @@ textarea{ resize:vertical; min-height:4.5rem; }
 			</label>
 			<label class="onay">
 				<input type="checkbox" name="onay" required>
-				<span>Adımın ve telefonumun yalnız bu dersi ayarlamak için Bilal Faruk Özdemir'e iletilmesini kabul ediyorum. Bu bilgiler takvimde başkalarına görünmez.</span>
+				<span data-m="onay">Adımın ve telefonumun yalnız bu dersi ayarlamak için Bilal Faruk Özdemir'e iletilmesini kabul ediyorum. Bu bilgiler takvimde başkalarına görünmez.</span>
 			</label>
 			<p class="formhata" id="formHata" role="alert"></p>
 			<div class="dugmeler">
-				<button type="button" id="vazgec">Vazgeç</button>
-				<button type="submit" class="ana" id="gonder">Talebi gönder</button>
+				<button type="button" id="vazgec" data-m="vazgec">Vazgeç</button>
+				<button type="submit" class="ana" id="gonder" data-m="gonder">Talebi gönder</button>
 			</div>
 		</form>
 	</div>
 	<div id="sonuc" hidden>
-		<h2>Talebin alındı</h2>
+		<h2 data-m="alindi">Talebin alındı</h2>
 		<p class="tamam" id="sonucSaat"></p>
-		<p>Saat senin için ayrıldı. Bilal onaylayınca WhatsApp'tan yazacak; 24 saat içinde cevap gelmezse saat yeniden boşa çıkar.</p>
-		<div class="dugmeler"><button type="button" class="ana" id="kapat">Tamam</button></div>
+		<p data-m="alindiAciklama">Saat senin için ayrıldı. Bilal onaylayınca WhatsApp'tan yazacak; 24 saat içinde cevap gelmezse saat yeniden boşa çıkar.</p>
+		<div class="dugmeler"><button type="button" class="ana" id="kapat" data-m="tamam">Tamam</button></div>
 	</div>
 </dialog>
 
@@ -171,7 +183,92 @@ textarea{ resize:vertical; min-height:4.5rem; }
 <script>
 (function () {
 	var $ = function (id) { return document.getElementById(id); };
+
+	// ── Dil ──────────────────────────────────────────────────────────────
+	// Ana sayfayla aynı kural ve aynı kayıt: tarayıcı dili Türkçe değilse
+	// İngilizce; tuşla seçilen dil iki sayfada da hatırlanır.
+	var DIL_ANAHTARI = "linklerim_dil";
+	var M = {
+		tr: {
+			sayfa: "Ders Takvimi — Bilal Faruk Özdemir", dilSecimi: "Dil seçimi",
+			baslik: "Ders Takvimi",
+			giris: "Birebir ve online yapay zekâ dersi. Uygun bir saat seç, talebini gönder; onaylayınca sana WhatsApp'tan yazarım.",
+			bos: "Boş, seçilebilir", dolu: "Dolu", kapali: "Kapalı",
+			onceki: "Önceki hafta", sonraki: "Sonraki hafta", yukleniyor: "Takvim yükleniyor…",
+			talepBaslik: "Ders talebi", ad: "Adın soyadın", telefon: "Telefon (WhatsApp)",
+			veli: "18 yaşından küçüksen velinin numarasını yaz.", telefonOrnek: "05xx xxx xx xx",
+			not: "Not", notAciklama: "İsteğe bağlı: seviyen, ne öğrenmek istediğin.",
+			onay: "Adımın ve telefonumun yalnız bu dersi ayarlamak için Bilal Faruk Özdemir'e iletilmesini kabul ediyorum. Bu bilgiler takvimde başkalarına görünmez.",
+			vazgec: "Vazgeç", gonder: "Talebi gönder", alindi: "Talebin alındı",
+			alindiAciklama: "Saat senin için ayrıldı. Bilal onaylayınca WhatsApp'tan yazacak; 24 saat içinde cevap gelmezse saat yeniden boşa çıkar.",
+			tamam: "Tamam", uygunYok: "Uygun saat yok", doluEtiket: " dolu", kapaliEtiket: " kapalı", sec: " seç",
+			turkiyeSaati: "Türkiye saatiyle ",
+			yerelSaat: function (dilim, enAz) { return "Saatler senin yerel saatinle gösteriliyor" + (dilim ? " (" + dilim + ")" : "") + ". Her blok 1 saat, en erken " + enAz + " saat sonrası seçilebilir."; },
+			okunamadi: "Takvim okunamadı.", gonderilemedi: "Talep gönderilemedi, yeniden dene.",
+			baglantiYok: "Bağlantı kurulamadı, yeniden dene.", baglantiYokSayfa: "Bağlantı kurulamadı, sayfayı yenile."
+		},
+		en: {
+			sayfa: "Lesson Calendar — Bilal Faruk Özdemir", dilSecimi: "Language",
+			baslik: "Lesson Calendar",
+			giris: "1-on-1 online AI lessons. Pick a time that works for you and send a request; once I confirm, I'll message you on WhatsApp.",
+			bos: "Available", dolu: "Booked", kapali: "Closed",
+			onceki: "Previous week", sonraki: "Next week", yukleniyor: "Loading calendar…",
+			talepBaslik: "Lesson request", ad: "Full name", telefon: "Phone (WhatsApp)",
+			veli: "Include your country code. If you're under 18, enter a parent's number.", telefonOrnek: "+44 7700 900123",
+			not: "Note", notAciklama: "Optional: your level, what you'd like to learn.",
+			onay: "I agree that my name and phone number are shared with Bilal Faruk Özdemir only to arrange this lesson. They are not visible to others on the calendar.",
+			vazgec: "Cancel", gonder: "Send request", alindi: "Request received",
+			alindiAciklama: "The time is held for you. Bilal will message you on WhatsApp once he confirms; if there's no reply within 24 hours, the slot opens up again.",
+			tamam: "OK", uygunYok: "No available times", doluEtiket: " booked", kapaliEtiket: " closed", sec: " select",
+			turkiyeSaati: "Turkey time: ",
+			yerelSaat: function (dilim, enAz) { return "Times are shown in your local time" + (dilim ? " (" + dilim + ")" : "") + ". Each block is 1 hour; the earliest you can book is " + enAz + " hours from now."; },
+			okunamadi: "Couldn't load the calendar.", gonderilemedi: "Couldn't send the request, please try again.",
+			baglantiYok: "Couldn't connect, please try again.", baglantiYokSayfa: "Couldn't connect, please refresh the page."
+		}
+	};
+	// Sunucunun Türkçe hata cevapları İngilizce sayfada çevrilir; bilinmeyen olursa olduğu gibi kalır.
+	var SUNUCU_EN = {
+		"Adını yaz.": "Please enter your name.",
+		"Telefon numarasını kontrol et.": "Please check your phone number (include the country code).",
+		"Bilgilerini paylaşma onayını işaretle.": "Please tick the consent box.",
+		"Bu saat artık seçilemiyor, başka bir saat seç.": "This time can no longer be booked, please pick another.",
+		"Bu saat az önce doldu, başka bir saat seç.": "This time was just booked, please pick another.",
+		"Bu numarayla bekleyen talebin var. Cevap gelince yenisini gönderebilirsin.": "You already have a pending request with this number. You can send a new one after you get a reply.",
+		"Şu an çok talep var, biraz sonra yeniden dene.": "There are a lot of requests right now, please try again later.",
+		"Form okunamadı.": "The form couldn't be read.",
+		"İzin verilmedi.": "Not allowed.",
+		"Takvim şu an kapalı.": "The calendar is closed right now.",
+		"Takvim okunamadı, biraz sonra yeniden dene.": "Couldn't load the calendar, please try again later.",
+		"Talep kaydedilemedi, biraz sonra yeniden dene.": "Couldn't save the request, please try again later."
+	};
+
+	function kayitliDil() {
+		try { var v = localStorage.getItem(DIL_ANAHTARI); return v === "tr" || v === "en" ? v : null; }
+		catch (e) { return null; }
+	}
+	function tarayiciDili() {
+		var list = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || ""];
+		for (var i = 0; i < list.length; i++) if (/^tr\b/i.test(String(list[i]))) return "tr";
+		return "en";
+	}
+	var dil = kayitliDil() || tarayiciDili();
+	function t(k) { return M[dil][k]; }
+	function sunucuMetni(m) { return dil === "en" && SUNUCU_EN[m] ? SUNUCU_EN[m] : m; }
+
+	function metinleriYaz() {
+		document.documentElement.lang = dil;
+		document.title = t("sayfa");
+		document.querySelectorAll("[data-m]").forEach(function (n) { n.textContent = t(n.getAttribute("data-m")); });
+		document.querySelectorAll("[data-m-aria]").forEach(function (n) { n.setAttribute("aria-label", t(n.getAttribute("data-m-aria"))); });
+		document.querySelectorAll("[data-m-ph]").forEach(function (n) { n.placeholder = t(n.getAttribute("data-m-ph")); });
+		$("dilTusu").setAttribute("aria-label", t("dilSecimi"));
+		$("dilTusu").querySelectorAll("button").forEach(function (b) {
+			b.setAttribute("aria-pressed", String(b.getAttribute("data-dil") === dil));
+		});
+	}
+
 	var gunler = [];
+	var ham = null, enAzSaat = 0, yuklendi = false, yukHatasi = null;
 	var hafta = 0;
 	var secili = null;
 
@@ -199,7 +296,7 @@ textarea{ resize:vertical; min-height:4.5rem; }
 			if (!g.saatler.length) {
 				var yok = document.createElement("p");
 				yok.className = "bos";
-				yok.textContent = "Uygun saat yok";
+				yok.textContent = t("uygunYok");
 				kutu.appendChild(yok);
 				return kutu;
 			}
@@ -214,13 +311,13 @@ textarea{ resize:vertical; min-height:4.5rem; }
 				d.style.setProperty("--sira", satirlar.indexOf(s.saat) + 1);
 				if (s.durum === "dolu") {
 					d.disabled = true;
-					d.setAttribute("aria-label", s.saat + " dolu");
+					d.setAttribute("aria-label", s.saat + t("doluEtiket"));
 				} else if (s.durum === "kapali") {
 					d.disabled = true;
 					d.classList.add("kapali");
-					d.setAttribute("aria-label", s.saat + " kapalı");
+					d.setAttribute("aria-label", s.saat + t("kapaliEtiket"));
 				} else {
-					d.setAttribute("aria-label", g.ad + " " + g.tarih + " " + s.saat + " seç");
+					d.setAttribute("aria-label", g.ad + " " + g.tarih + " " + s.saat + t("sec"));
 					d.addEventListener("click", function () { ac(g, s); });
 				}
 				liste.appendChild(d);
@@ -233,8 +330,8 @@ textarea{ resize:vertical; min-height:4.5rem; }
 
 	function ac(g, s) {
 		secili = s.start;
-		$("secilen").textContent = g.tarih + " " + g.ad + ", " + s.aralik;
-		$("turkiye").textContent = s.turkiyeden ? "Türkiye saatiyle " + s.turkiyeYazisi : "";
+		$("secilen").textContent = (dil === "en" ? g.ad + ", " + g.tarih : g.tarih + " " + g.ad) + ", " + s.aralik;
+		$("turkiye").textContent = s.turkiyeden ? t("turkiyeSaati") + s.turkiyeYazisi : "";
 		$("turkiye").hidden = !s.turkiyeden;
 		$("formHata").textContent = "";
 		$("formAlan").hidden = false;
@@ -245,14 +342,16 @@ textarea{ resize:vertical; min-height:4.5rem; }
 	function yukle() {
 		return fetch("/takvim/musait", { cache: "no-store" }).then(function (y) {
 			return y.json().then(function (v) {
-				if (!y.ok) throw new Error(v.hata || "Takvim okunamadı.");
+				if (!y.ok) throw new Error(v.hata || t("okunamadi"));
 				return v;
 			});
 		}).then(function (v) {
-			gunler = TakvimSaat.grupla(v.gunler);
+			ham = v.gunler;
+			enAzSaat = v.enAzSaat;
+			yuklendi = true;
+			gunler = TakvimSaat.grupla(ham, undefined, dil);
 			if ((hafta + 1) * 7 > gunler.length + 6) hafta = 0;
-			var dilim = TakvimSaat.saatDilimi();
-			$("acik").textContent = "Saatler senin yerel saatinle gösteriliyor" + (dilim ? " (" + dilim + ")" : "") + ". Her blok 1 saat, en erken " + v.enAzSaat + " saat sonrası seçilebilir.";
+			$("acik").textContent = t("yerelSaat")(TakvimSaat.saatDilimi(), enAzSaat);
 			$("acik").hidden = false;
 			$("gezgin").hidden = false;
 			$("lejant").hidden = false;
@@ -260,6 +359,27 @@ textarea{ resize:vertical; min-height:4.5rem; }
 			ciz();
 		});
 	}
+
+	function yukHatasiYaz() {
+		$("durum").textContent = yukHatasi === "Failed to fetch" ? t("baglantiYokSayfa") : sunucuMetni(yukHatasi);
+	}
+
+	$("dilTusu").addEventListener("click", function (olay) {
+		var b = olay.target.closest("button[data-dil]");
+		if (!b || b.getAttribute("data-dil") === dil) return;
+		dil = b.getAttribute("data-dil");
+		try { localStorage.setItem(DIL_ANAHTARI, dil); } catch (e) {}
+		metinleriYaz();
+		if (yuklendi) {
+			gunler = TakvimSaat.grupla(ham, undefined, dil);
+			$("acik").textContent = t("yerelSaat")(TakvimSaat.saatDilimi(), enAzSaat);
+			ciz();
+		} else if (yukHatasi) {
+			yukHatasiYaz();
+		}
+		$("formHata").textContent = "";
+		if ($("pencere").open) $("pencere").close();
+	});
 
 	$("geri").addEventListener("click", function () { hafta--; ciz(); });
 	$("ileri").addEventListener("click", function () { hafta++; ciz(); });
@@ -281,6 +401,7 @@ textarea{ resize:vertical; min-height:4.5rem; }
 				phone: f.phone.value,
 				note: f.note.value,
 				site: f.site.value,
+				dil: dil,
 				tz: TakvimSaat.saatDilimi(),
 				onay: f.onay.checked
 			})
@@ -293,18 +414,20 @@ textarea{ resize:vertical; min-height:4.5rem; }
 					f.reset();
 					return yukle();
 				}
-				hata.textContent = v.hata || "Talep gönderilemedi, yeniden dene.";
+				hata.textContent = v.hata ? sunucuMetni(v.hata) : t("gonderilemedi");
 				if (v.dolu) return yukle();
 			});
 		}).catch(function () {
-			hata.textContent = "Bağlantı kurulamadı, yeniden dene.";
+			hata.textContent = t("baglantiYok");
 		}).then(function () {
 			$("gonder").disabled = false;
 		});
 	});
 
+	metinleriYaz();
 	yukle().catch(function (e) {
-		$("durum").textContent = e.message === "Failed to fetch" ? "Bağlantı kurulamadı, sayfayı yenile." : e.message;
+		yukHatasi = e.message;
+		yukHatasiYaz();
 		$("durum").classList.add("hata");
 	});
 })();

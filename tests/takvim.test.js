@@ -337,9 +337,9 @@ test("yurt dışındaki öğrencinin saati Telegram'a ve WhatsApp mesajına geç
 });
 
 /** Tarayıcı kodunu gerçek saat dilimiyle ayrı süreçte çalıştırır. */
-function gruplaDilimde(tz, gunler, simdi) {
+function gruplaDilimde(tz, gunler, simdi, dil) {
 	const kod = `require(${JSON.stringify(new URL("../public/takvim-saat.js", import.meta.url).pathname)});
-		console.log(JSON.stringify(globalThis.TakvimSaat.grupla(${JSON.stringify(gunler)}, new Date(${JSON.stringify(simdi)}))));`;
+		console.log(JSON.stringify(globalThis.TakvimSaat.grupla(${JSON.stringify(gunler)}, new Date(${JSON.stringify(simdi)}), ${JSON.stringify(dil ?? null)})));`;
 	const c = spawnSync(process.execPath, ["--input-type=commonjs", "-e", kod], { env: { ...process.env, TZ: tz }, encoding: "utf8" });
 	assert.equal(c.status, 0, c.stderr);
 	return JSON.parse(c.stdout);
@@ -454,4 +454,33 @@ test("kapalı saate girilen plan herkese kapalı görünür, açık saatte dolu"
 	const metin = await (await musaitYaniti(bag)).text();
 	assert.ok(metin.includes('"start":"2026-11-09T11:00","durum":"kapali"'));
 	assert.ok(metin.includes('"start":"2026-11-09T19:00","durum":"dolu"'));
+});
+
+test("İngilizce takvim: gün ve ay adları İngilizce, saatler aynı", () => {
+	const gunler = [{ gun: "2026-11-06", saatler: [{ start: "2026-11-06T19:00", durum: "bos" }] }];
+	const en = gruplaDilimde("Europe/London", gunler, "2026-11-06T06:00:00Z", "en");
+	assert.equal(en[0].ad, "Friday");
+	assert.equal(en[0].tarih, "Nov 6");
+	assert.deepEqual(en[0].saatler.map((s) => s.saat), ["16:00"]);
+	const tr = gruplaDilimde("Europe/Istanbul", gunler, "2026-11-06T06:00:00Z");
+	assert.equal(tr[0].ad, "Cuma");
+	assert.equal(tr[0].tarih, "6 Kasım");
+});
+
+test("İngilizce sayfadan gelen talep Telegram'da belirtilir", async () => {
+	const temel = { start: "2026-11-06T19:00", name: "Ayşe", phone: "+447700900123", onay: true };
+	assert.equal(talepDogrula(temel, { hafta: HAFTA, now: SIMDI }).deger.dil, "tr");
+	assert.equal(talepDogrula({ ...temel, dil: "en" }, { hafta: HAFTA, now: SIMDI }).deger.dil, "en");
+	assert.equal(talepDogrula({ ...temel, dil: "<b>" }, { hafta: HAFTA, now: SIMDI }).deger.dil, "tr");
+
+	const db = sahteD1();
+	const telegram = sahteTelegram();
+	const y = await talepOlustur(talepIstegi({ dil: "en" }), { db, telegram, now: SIMDI });
+	assert.equal(y.status, 201);
+	assert.match(telegram.giden[0].text, /🌐 İngilizce sayfadan/);
+	assert.match(decodeURIComponent(telegram.giden[0].dugmeler[1][0].url), /text=Hi /);
+
+	const telegram2 = sahteTelegram();
+	await talepOlustur(talepIstegi({ phone: "05329998877", start: "2026-11-06T20:00" }), { db, telegram: telegram2, now: SIMDI });
+	assert.doesNotMatch(telegram2.giden[0].text, /İngilizce/);
 });
